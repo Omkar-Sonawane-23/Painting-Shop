@@ -6,33 +6,27 @@ import CartSidebar from './components/CartSidebar';
 import Home from './pages/Home';
 import Shop from './pages/Shop';
 import ProductPage from './pages/ProductPage';
+import Cart from './pages/Cart'; // Imported Cart Page
 import Contact from './pages/Contact';
 import { INITIAL_PRODUCTS } from './data/products';
 
 export default function App() {
-  // Data State
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  
-  // UI State
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  
-  // Cart State
   const [cart, setCart] = useState([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isCartSidebarOpen, setIsCartSidebarOpen] = useState(false);
 
-  // Scroll to top on route change
   const { pathname } = useLocation();
+  
   useEffect(() => {
     window.scrollTo(0, 0);
-    setIsMobileMenuOpen(false); // Close mobile menu on navigation
+    setIsMobileMenuOpen(false);
   }, [pathname]);
 
-  // --- Simulating API Call ---
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
-      // Simulate network delay
       setTimeout(() => {
         setProducts(INITIAL_PRODUCTS);
         setLoading(false);
@@ -43,7 +37,7 @@ export default function App() {
 
   const addToCart = (product) => {
     setCart([...cart, product]);
-    setIsCartOpen(true);
+    setIsCartSidebarOpen(true); // Open sidebar for quick confirmation
   };
 
   const removeFromCart = (index) => {
@@ -62,12 +56,13 @@ export default function App() {
         cartCount={cart.length} 
         isMobileMenuOpen={isMobileMenuOpen}
         setIsMobileMenuOpen={setIsMobileMenuOpen}
-        onOpenCart={() => setIsCartOpen(true)}
+        onOpenCart={() => setIsCartSidebarOpen(true)}
       />
       
+      {/* Quick View Cart Sidebar (matches wireframe mini-cart behavior) */}
       <CartSidebar 
-        isOpen={isCartOpen} 
-        onClose={() => setIsCartOpen(false)} 
+        isOpen={isCartSidebarOpen} 
+        onClose={() => setIsCartSidebarOpen(false)} 
         cartItems={cart} 
         onRemove={removeFromCart} 
         onCheckout={checkout}
@@ -75,29 +70,11 @@ export default function App() {
       
       <main className="flex-grow">
         <Routes>
-          <Route path="/" element={
-            <Home 
-              products={products} 
-              onShopNow={() => {}} // Navigation handled in Home via Link
-              onCategoryClick={() => {}} // Navigation handled in Home via Link
-            />
-          } />
-          
-          <Route path="/shop" element={
-            <Shop 
-              products={products} 
-              loading={loading} 
-              addToCart={addToCart}
-            />
-          } />
-          
-          <Route path="/product/:id" element={
-            <ProductPage 
-              products={products}
-              addToCart={addToCart} 
-            />
-          } />
-          
+          <Route path="/" element={<Home onAddToCart={addToCart} />} />
+          <Route path="/shop" element={<Shop products={products} loading={loading} addToCart={addToCart} />} />
+          <Route path="/product/:id" element={<ProductPage products={products} addToCart={addToCart} />} />
+          {/* Full Cart Page route */}
+          <Route path="/cart" element={<Cart cartItems={cart} onRemove={removeFromCart} onCheckout={checkout} />} /> 
           <Route path="/contact" element={<Contact />} />
         </Routes>
       </main>

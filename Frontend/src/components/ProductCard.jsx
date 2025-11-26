@@ -1,46 +1,68 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { ShoppingCart, Star } from 'lucide-react';
 import { CATEGORIES } from '../data/products';
 
 const ProductCard = ({ product, onViewDetails, onAddToCart }) => {
-  const categoryName = CATEGORIES.find(c => c.id === product.category)?.name.split(' ')[0] || 'Pearl';
+  // Helper to safely get category name for display
+  const categoryName = CATEGORIES.find(c => c.id === product.category)?.name || 'Pearl';
 
   return (
-    <div 
-      className="bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-800 hover:border-yellow-500/30 transition-all duration-300 group flex flex-col shadow-lg cursor-pointer"
-      onClick={() => onViewDetails(product)}
-    >
-      <div className="relative aspect-square overflow-hidden bg-zinc-800">
+    <div className="group relative bg-white border-2 border-zinc-800 rounded-2xl overflow-hidden hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(39,39,42,1)] transition-all duration-200 h-full flex flex-col">
+      
+      {/* Image Section */}
+      <div className="relative aspect-square border-b-2 border-zinc-800 bg-stone-100 overflow-hidden">
         <div 
-          className="w-full h-full transform group-hover:scale-110 transition-transform duration-700" 
+          className="w-full h-full transform group-hover:scale-110 transition-transform duration-500" 
           style={{ background: product.imageColor }}
         ></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80"></div>
         
-        <button 
-          onClick={(e) => { e.stopPropagation(); onAddToCart(product); }}
-          className="absolute bottom-3 right-3 bg-white text-black p-3 rounded-full shadow-xl translate-y-12 group-hover:translate-y-0 transition-all duration-300 hover:bg-yellow-400 z-10"
-        >
-          <ShoppingCart size={18} />
-        </button>
-        
-        <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold text-white uppercase tracking-wider border border-white/10">
-          {categoryName}
-        </div>
+        {/* Overlay Pattern (Wireframe style) */}
+        <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/diagonal-stripes.png')] pointer-events-none"></div>
+
+        <Link 
+          to={`/product/${product.id}`}
+          className="absolute inset-0 z-10"
+        />
+
+        <span className="absolute top-3 left-3 bg-white/90 border-2 border-zinc-800 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest z-20">
+          {categoryName.split(' ')[0]}
+        </span>
       </div>
 
-      <div className="p-4 flex flex-col flex-grow">
-        <div className="flex justify-between items-start mb-1">
-           <h3 className="text-base font-bold text-white truncate pr-2">{product.name}</h3>
-           <div className="flex text-yellow-500 text-[10px] items-center gap-0.5 bg-yellow-500/10 px-1.5 py-0.5 rounded">
-              <span>{product.rating}</span> <Star size={10} fill="currentColor"/>
-           </div>
-        </div>
-        <p className="text-zinc-500 text-xs line-clamp-2 mb-4 leading-relaxed">{product.description}</p>
+      {/* Content Section */}
+      <div className="p-5 flex flex-col flex-grow">
+        <Link to={`/product/${product.id}`} className="block group-hover:text-rose-500 transition-colors">
+           <h3 className="text-lg font-black text-zinc-900 mb-1 leading-tight">{product.name}</h3>
+        </Link>
         
-        <div className="mt-auto flex justify-between items-center pt-3 border-t border-zinc-800/50">
-          <p className="text-lg font-bold text-white font-mono">₹{product.price}</p>
-          <span className="text-[10px] text-zinc-500 uppercase">In Stock</span>
+        {/* Rating */}
+        <div className="flex items-center gap-1 mb-3">
+           <div className="flex text-yellow-400">
+             {[...Array(5)].map((_, i) => (
+               <Star key={i} size={14} fill={i < product.rating ? "currentColor" : "none"} strokeWidth={2.5} className="text-yellow-400" />
+             ))}
+           </div>
+           <span className="text-xs font-bold text-zinc-400 pt-0.5">(24)</span>
+        </div>
+
+        <p className="text-xs font-medium text-zinc-500 line-clamp-2 mb-6 leading-relaxed">
+          {product.description || "Premium automotive grade pearl pigment. High UV resistance and excellent coverage."}
+        </p>
+
+        <div className="mt-auto flex items-center justify-between">
+           <div>
+             <span className="block text-[10px] font-bold text-zinc-400 uppercase">Price / 100g</span>
+             <span className="text-xl font-black text-zinc-900 font-mono">₹{product.price}</span>
+           </div>
+           
+           <button 
+             onClick={(e) => { e.stopPropagation(); onAddToCart(product); }}
+             className="w-10 h-10 bg-yellow-400 hover:bg-yellow-300 border-2 border-zinc-800 rounded-lg flex items-center justify-center transition-colors text-zinc-900 active:scale-95"
+             title="Add to Cart"
+           >
+             <ShoppingCart size={20} strokeWidth={2.5} />
+           </button>
         </div>
       </div>
     </div>
