@@ -12,6 +12,7 @@ const Shop = ({ products, loading, activeCategory, setActiveCategory, onViewDeta
   return (
     <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 min-h-screen">
       <div className="flex flex-col md:flex-row gap-8">
+        {/* Sidebar Filter */}
         <div className="hidden md:block w-64 flex-shrink-0">
           <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-6 sticky top-24">
             <div className="flex items-center mb-6 pb-4 border-b border-zinc-800">
@@ -27,7 +28,13 @@ const Shop = ({ products, loading, activeCategory, setActiveCategory, onViewDeta
           </div>
         </div>
 
+        {/* Product Grid */}
         <div className="flex-1">
+          <div className="flex items-center justify-between mb-6 md:hidden">
+             <span className="text-white font-bold">{filteredProducts.length} Products</span>
+             <button className="flex items-center text-sm text-yellow-500 font-bold gap-2"><Filter size={16}/> Filter</button>
+          </div>
+
           {loading ? (
             <div className="flex flex-col items-center justify-center h-64 text-zinc-500">
               <Loader size={40} className="animate-spin mb-4 text-yellow-500" />
