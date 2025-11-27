@@ -2,45 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body {
-  height: 100%;
-  background-color: #FAF9F6; /* Off-white / Stone-50 equivalent */
-  color: #18181b; /* zinc-900 */
+:root {
+  color-scheme: dark;
 }
 
-/* Custom scrollbar hiding for sleek look */
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.hide-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+body {
+  background-color: #000;
+  color: #fff;
 }
 
-/* Utility for handwriting style font if needed, or fallback to sans */
-.font-handwriting-style {
-  font-family: 'Inter', sans-serif; /* Placeholder, can be replaced with a real handwriting font */
-}
-/* Sketch-style dotted background */
-.sketch-pattern {
-  background-image: url("https://www.toptal.com/designers/subtlepatterns/uploads/dot-grid.png");
-  background-size: 120px;
+/* Custom Scrollbar for dark theme */
+::-webkit-scrollbar {
+  width: 8px;
 }
 
-.sketch-pattern-pink {
-  background-image: url("https://www.toptal.com/designers/subtlepatterns/uploads/dot-grid.png");
-  background-size: 120px;
-}
-.sketch-pattern {
-  background-image: url("https://www.toptal.com/designers/subtlepatterns/uploads/dot-grid.png");
-  background-size: 120px;
+::-webkit-scrollbar-track {
+  background: #111;
 }
 
-.sketch-pattern-pink {
-  background-image: url("https://www.toptal.com/designers/subtlepatterns/uploads/dot-grid.png");
-  background-size: 120px;
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 4px;
 }
-.sketch-pattern-blue {
-  background-image: url("https://www.toptal.com/designers/subtlepatterns/uploads/dot-grid.png");
-  background-size: 120px;
+
+::-webkit-scrollbar-thumb:hover {
+  background: #d32f2f;
 }

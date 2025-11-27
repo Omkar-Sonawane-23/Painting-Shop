@@ -1,183 +1,75 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { Filter, Search } from "lucide-react";
-import { CATEGORIES, PRODUCTS } from "../data/products";
+import React, { useState } from 'react';
+import { Filter, ChevronDown } from 'lucide-react';
+import ProductCard from '../components/ProductCard.jsx';
+import { products } from '../data/products.js';
 
-const Shop = ({ addToCart }) => {
-  const [filterOpen, setFilterOpen] = useState(false);
-  const [activeCat, setActiveCat] = useState("All");
-  const [searchTerm, setSearchTerm] = useState("");
+const Shop = ({ onAddToCart }) => {
+  const [activeCategory, setActiveCategory] = useState('All');
+  
+  const categories = ['All', 'Solid Pearls', 'Interference Pearls', 'Carbon Pearls', 'OEM+ Pearls', 'Special Effect Pearls', 'Chroma Pearls'];
 
-  const filtered = PRODUCTS.filter((p) => {
-    const matchesCat = activeCat === "All" || p.category === activeCat;
-    const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesCat && matchesSearch;
-  });
+  const filteredProducts = activeCategory === 'All' 
+    ? products 
+    : products.filter(p => p.category === activeCategory);
 
   return (
-    <div className="bg-[#fdf7f2] min-h-screen">
-
-      {/* ================================
-          SKETCH STYLE SEARCH HEADER
-      ================================= */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="
-           bg-blue-200 sketch-pattern 
-           border-4 border-black 
-           rounded-[28px] p-10 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]
-           text-center
-        ">
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            
-            <input
-              type="text"
-              placeholder="Search Something...."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="
-                w-full sm:w-96 
-                px-6 py-3 rounded-full text-lg 
-                border-4 border-black sketch-pattern-pink
-                outline-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
-              "
-            />
-
-            <button
-              className="
-                px-10 py-3 bg-rose-300 
-                border-4 border-black rounded-full 
-                text-lg font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
-                hover:translate-y-1 transition-all
-              "
-            >
-              Search
-            </button>
-          </div>
-
-          <p className="mt-6 text-lg font-medium text-slate-700">
-            Showing {filtered.length} Results for "{searchTerm || 'All'}"
+    <div className="bg-white min-h-screen pt-8 pb-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Header */}
+        <div className="mb-10 text-center">
+          <h1 className="text-4xl font-black text-black italic uppercase mb-4">Shop All Colors</h1>
+          <p className="text-gray-500 max-w-2xl mx-auto">
+            Browse our complete catalog of automotive grade pearls. Filter by type to find your perfect finish.
           </p>
         </div>
-      </div>
 
-      {/* ================================
-              MAIN SHOP LAYOUT
-      ================================= */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex flex-col md:flex-row gap-12">
-
-        {/* ================================
-                SKETCH SIDEBAR (Sticky)
-        ================================= */}
-        <aside
-          className={`md:w-72 flex-shrink-0 ${filterOpen ? "block" : "hidden md:block"}`}
-        >
-          <div className="
-            sticky top-24 
-            h-[calc(100vh-6rem)] 
-            overflow-y-auto 
-            pr-3
-            space-y-8
-          ">
-            <div className="
-              bg-white border-4 border-black 
-              rounded-[22px] p-6 shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]
-            ">
-              <h3 className="text-xl font-black mb-6">Filter & Sort</h3>
-
-              {/* Categories */}
-              <div className="mb-8">
-                <h4 className="font-bold mb-3">Categories</h4>
-                <div className="space-y-2">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Sidebar Filters */}
+          <div className="w-full lg:w-64 flex-shrink-0">
+            <div className="bg-gray-50 p-6 rounded-sm border border-gray-200 sticky top-24 shadow-sm">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-black font-bold uppercase tracking-wider flex items-center">
+                  <Filter className="h-4 w-4 mr-2" /> Filters
+                </h3>
+              </div>
+              
+              <div className="space-y-2">
+                {categories.map(cat => (
                   <button
-                    onClick={() => setActiveCat("All")}
-                    className={`w-full text-left px-4 py-2 rounded-lg font-bold border-2 border-black ${
-                      activeCat === "All"
-                        ? "bg-rose-200"
-                        : "bg-white hover:bg-rose-100"
+                    key={cat}
+                    onClick={() => setActiveCategory(cat)}
+                    className={`block w-full text-left px-3 py-2 text-sm rounded-sm transition-colors ${
+                      activeCategory === cat 
+                        ? 'bg-sky-500 text-white font-bold shadow-md' 
+                        : 'text-gray-600 hover:text-black hover:bg-gray-200'
                     }`}
                   >
-                    All Products
+                    {cat}
                   </button>
-
-                  {CATEGORIES.map((cat) => (
-                    <button
-                      key={cat.id}
-                      onClick={() => setActiveCat(cat.id)}
-                      className={`w-full text-left px-4 py-2 rounded-lg font-bold border-2 border-black ${
-                        activeCat === cat.id
-                          ? "bg-rose-200"
-                          : "bg-white hover:bg-rose-100"
-                      }`}
-                    >
-                      {cat.name}
-                    </button>
-                  ))}
-                </div>
+                ))}
               </div>
-
             </div>
           </div>
-        </aside>
 
-        {/* ================================
-                SKETCH PRODUCT GRID
-        ================================= */}
-        <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-
-          {filtered.map((product) => (
-            <div
-              key={product.id}
-              className="
-                bg-white border-4 border-black 
-                rounded-[28px] p-6 
-                sketch-pattern-pink
-                shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]
-              "
-            >
-              {/* Card Top */}
-              <div className="
-                h-48 rounded-[22px] bg-white border-4 border-black 
-                flex items-center justify-center text-xl font-bold mb-4
-                shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
-              ">
-                {product.categoryName || "Solid Pearls"}
+          {/* Product Grid */}
+          <div className="flex-1">
+            <div className="flex justify-between items-center mb-6">
+              <p className="text-gray-500 text-sm">Showing {filteredProducts.length} results</p>
+              <div className="flex items-center space-x-2 text-sm text-gray-500">
+                <span>Sort by:</span>
+                <button className="flex items-center font-bold text-black hover:text-sky-500 transition-colors">
+                  Featured <ChevronDown className="h-4 w-4 ml-1" />
+                </button>
               </div>
-
-              {/* Product Name */}
-              <h3 className="text-xl font-black">{product.name}</h3>
-
-              {/* Description */}
-              <p className="text-base mt-2">{product.description}</p>
-
             </div>
-          ))}
 
-          {filtered.length === 0 && (
-            <div className="
-              w-full col-span-3 text-center py-20 
-              bg-white border-4 border-black rounded-[28px]
-              sketch-pattern shadow-[5px_5px_0px_0px_rgba(0,0,0,1)]
-            ">
-              <p className="text-xl font-bold text-slate-700">
-                No matching pigments found.
-              </p>
-
-              <button
-                onClick={() => {
-                  setActiveCat("All");
-                  setSearchTerm("");
-                }}
-                className="
-                  mt-4 px-8 py-2 bg-rose-300 
-                  border-4 border-black rounded-full 
-                  font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]
-                "
-              >
-                Clear Filters
-              </button>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredProducts.map(product => (
+                <ProductCard key={product.id} product={product} onAddToCart={onAddToCart} />
+              ))}
             </div>
-          )}
-
+          </div>
         </div>
       </div>
     </div>
@@ -185,4 +77,3 @@ const Shop = ({ addToCart }) => {
 };
 
 export default Shop;
-  

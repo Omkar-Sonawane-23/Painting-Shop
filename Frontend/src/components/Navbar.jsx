@@ -1,138 +1,74 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { ShoppingCart, Menu, X, ChevronRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { ShoppingCart, Search, Menu, X, User } from 'lucide-react';
 
 const Navbar = ({ cartCount }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  const location = useLocation();
-
-  // Shadow on scroll
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Close mobile menu on route change
-  useEffect(() => {
-    setIsMenuOpen(false);
-  }, [location]);
-
-  const navLinks = [
-    { name: 'Home', path: '/' },
-    { name: 'Products', path: '/shop' },
-    { name: 'Partner', path: '#' },
-    { name: 'FAQ', path: '#' },
-    { name: 'Contact', path: '/contact' },
-  ];
 
   return (
-    <header 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white ${
-        scrolled ? 'shadow-md py-2' : 'border-b border-gray-200 py-4'
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          
-          {/* --- LEFT: LOGO --- */}
-          <div className="flex-shrink-0 flex items-center">
-            <Link to="/" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 bg-zinc-900 rounded-lg flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
-                <span className="text-white font-black text-xl">K</span>
-              </div>
-              <div className="flex flex-col">
-                <span className="font-black text-lg text-zinc-900 leading-none tracking-tighter">XTREME</span>
-                <span className="text-[10px] font-bold text-yellow-600 uppercase tracking-[0.25em] leading-none">Kolorz</span>
-              </div>
-            </Link>
-          </div>
-
-          {/* --- CENTER: DESKTOP NAV (Visible on md+) --- */}
-          <div className="hidden md:flex flex-1 items-center justify-center px-8">
-            <nav className="flex items-center gap-6 lg:gap-8">
-              {navLinks.map((link, index) => (
-                <React.Fragment key={link.name}>
-                  <Link 
-                    to={link.path} 
-                    className={`text-xs lg:text-sm font-bold uppercase tracking-widest transition-colors hover:text-yellow-600 whitespace-nowrap ${
-                      location.pathname === link.path ? 'text-zinc-900' : 'text-zinc-500'
-                    }`}
-                  >
-                    {link.name}
-                  </Link>
-                  {index < navLinks.length - 1 && (
-                    <span className="text-zinc-300 text-[10px]">|</span>
-                  )}
-                </React.Fragment>
-              ))}
-            </nav>
-          </div>
-
-          {/* --- RIGHT: ACTIONS --- */}
-          <div className="flex items-center justify-end gap-3 lg:gap-6">
-            
-            {/* Order Button (Visible on md+) */}
-            <Link 
-              to="/shop" 
-              className="hidden md:flex items-center justify-center px-5 py-2 bg-rose-100 hover:bg-rose-200 text-rose-800 border border-rose-200 rounded-full shadow-sm transition-all hover:-translate-y-0.5"
-            >
-              <span className="text-xs font-black uppercase tracking-wider">Order</span>
-            </Link>
-
-            {/* Cart Icon */}
-            <Link 
-              to="/cart"
-              className="relative p-2 text-zinc-700 hover:bg-zinc-100 rounded-full transition-colors"
-              aria-label="View Cart"
-            >
-              <ShoppingCart size={24} strokeWidth={2} />
-              {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center border-2 border-white shadow-sm">
-                  {cartCount}
-                </span>
-              )}
-            </Link>
-
-            {/* Mobile Menu Toggle (Hidden on md+) */}
-            <button 
-              onClick={() => setIsMenuOpen(!isMenuOpen)} 
-              className="md:hidden p-2 text-zinc-700 hover:bg-zinc-100 rounded-md"
-            >
-              {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
-            </button>
-          </div>
-
-        </div>
+    <nav className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+      {/* Top Banner - Kept Red for contrast as per original branding, or can be light blue if preferred. Keeping it red for 'Sale' urgency but clean. */}
+      <div className="bg-black text-white text-xs font-bold text-center py-2 px-4 tracking-widest">
+        HUGE SAVINGS UP TO 30% SITEWIDE | BLACK FRIDAY IS LIVE
       </div>
 
-      {/* --- MOBILE MENU DROPDOWN --- */}
-      {isMenuOpen && (
-        <div className="absolute top-[100%] left-0 right-0 bg-white border-t border-zinc-100 shadow-2xl md:hidden flex flex-col z-50 animate-in slide-in-from-top-2 duration-200 h-[calc(100vh-80px)] overflow-y-auto">
-          <div className="p-4 space-y-1">
-            {navLinks.map((link) => (
-              <Link 
-                key={link.name}
-                to={link.path} 
-                className="flex items-center justify-between px-4 py-4 text-zinc-600 font-bold uppercase text-sm border-b border-zinc-50 hover:bg-zinc-50 hover:text-zinc-900 transition-colors"
-              >
-                {link.name}
-                <ChevronRight size={16} className="text-zinc-300" />
-              </Link>
-            ))}
-            <div className="pt-6 mt-2">
-              <Link 
-                to="/shop" 
-                className="flex w-full justify-center px-6 py-4 bg-rose-500 text-white rounded-xl font-black uppercase tracking-widest shadow-lg active:scale-95 transition-transform"
-              >
-                Order Now
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-20">
+          
+          {/* Logo */}
+          <Link to="/" className="flex-shrink-0 group">
+            <h1 className="text-2xl font-black italic tracking-tighter text-black group-hover:text-sky-500 transition-colors">
+              XTREME <span className="text-sky-500">KOLORZ</span>
+            </h1>
+          </Link>
+
+          {/* Desktop Search */}
+          <div className="hidden md:flex flex-1 max-w-lg mx-8 relative">
+            <input
+              type="text"
+              placeholder="Search for Adamantium, Blue Dream..."
+              className="w-full bg-gray-100 text-black rounded-full py-2 pl-4 pr-10 focus:outline-none focus:ring-2 focus:ring-sky-500 border border-gray-200"
+            />
+            <Search className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" />
+          </div>
+
+          {/* Desktop Links */}
+          <div className="hidden md:flex items-center space-x-8">
+            <Link to="/shop" className="text-black hover:text-sky-500 font-bold uppercase tracking-wider text-sm transition-colors">Shop Colors</Link>
+            <Link to="/contact" className="text-black hover:text-sky-500 font-bold uppercase tracking-wider text-sm transition-colors">Contact</Link>
+            <div className="flex items-center space-x-4">
+              <User className="h-6 w-6 text-black cursor-pointer hover:text-sky-500 transition-colors" />
+              <Link to="/cart" className="relative group">
+                <ShoppingCart className="h-6 w-6 text-black group-hover:text-sky-500 transition-colors" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-sky-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                    {cartCount}
+                  </span>
+                )}
               </Link>
             </div>
           </div>
+
+          {/* Mobile menu button */}
+          <div className="md:hidden flex items-center">
+            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-black hover:text-sky-500">
+              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="md:hidden bg-white border-t border-gray-100 shadow-xl">
+          <div className="px-4 pt-2 pb-6 space-y-1">
+            <Link to="/" className="block px-3 py-3 text-black font-bold border-b border-gray-100 hover:text-sky-500">Home</Link>
+            <Link to="/shop" className="block px-3 py-3 text-black font-bold border-b border-gray-100 hover:text-sky-500">Shop All Colors</Link>
+            <Link to="/contact" className="block px-3 py-3 text-black font-bold hover:text-sky-500">Contact Us</Link>
+          </div>
         </div>
       )}
-    </header>
+    </nav>
   );
 };
 

@@ -1,73 +1,66 @@
-// Frontend/src/pages/Cart.jsx
 import React from 'react';
+import { Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { ShoppingCart, Shield } from 'lucide-react';
 
-const Cart = ({ items, removeFromCart }) => {
-  const total = items.reduce((acc, item) => acc + item.price, 0);
+const Cart = ({ cartItems, onRemoveItem }) => {
+  const total = cartItems.reduce((sum, item) => sum + item.price, 0);
 
-  if (items.length === 0) {
+  if (cartItems.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50">
-        <div className="w-20 h-20 bg-white rounded-full border-2 border-dashed border-slate-300 flex items-center justify-center mb-6">
-          <ShoppingCart className="text-slate-300" size={32} />
-        </div>
-        <h2 className="text-xl font-bold text-slate-900">Your Cart is Empty</h2>
-        <p className="text-slate-500 mt-2 mb-8">Looks like you haven't added any pigments yet.</p>
-        <Link to="/shop" className="px-6 py-3 bg-slate-900 text-white font-bold text-sm uppercase rounded-md">
-          Start Shopping
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center text-black">
+        <h2 className="text-3xl font-black italic mb-4">YOUR CART IS EMPTY</h2>
+        <Link to="/shop" className="text-sky-500 hover:text-sky-600 font-bold uppercase tracking-widest border-b border-sky-500">
+          Continue Shopping
         </Link>
       </div>
     );
   }
 
   return (
-    <div className="pt-24 pb-20 bg-slate-50 min-h-screen">
+    <div className="bg-white min-h-screen py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-black text-slate-900 uppercase tracking-tight mb-10">Shopping Cart</h1>
+        <h1 className="text-3xl font-black text-black italic uppercase mb-8">Shopping Cart</h1>
         
-        <div className="flex flex-col lg:flex-row gap-12">
-          {/* Items */}
-          <div className="flex-1 space-y-4">
-            {items.map((item, idx) => (
-              <div key={idx} className="bg-white p-4 rounded-xl border border-slate-200 flex items-center gap-6 shadow-sm">
-                <div className="w-20 h-20 rounded-lg bg-slate-100 flex-shrink-0 overflow-hidden" style={{ background: item.imageColor }}></div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          <div className="lg:col-span-2 space-y-4">
+            {cartItems.map((item, index) => (
+              <div key={`${item.id}-${index}`} className="bg-gray-50 p-4 flex items-center border border-gray-200 rounded-sm shadow-sm">
+                <img src={item.image} alt={item.name} className="w-24 h-24 object-cover mr-6 rounded-sm" />
                 <div className="flex-1">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="font-bold text-slate-900 text-lg">{item.name}</h3>
-                      <p className="text-sm text-slate-500 uppercase tracking-wider">{item.category} Pearl</p>
-                    </div>
-                    <span className="font-mono font-bold text-slate-900">₹{item.price}</span>
-                  </div>
-                  <div className="flex justify-between items-center mt-4">
-                    <span className="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded font-medium">100g Pack</span>
-                    <button onClick={() => removeFromCart(idx)} className="text-xs text-red-500 font-bold hover:underline">Remove</button>
-                  </div>
+                  <h3 className="text-black font-bold text-lg">{item.name}</h3>
+                  <p className="text-gray-500 text-sm">{item.category}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-black font-mono text-lg mb-2 font-bold">₹{item.price}</p>
+                  <button 
+                    onClick={() => onRemoveItem(index)}
+                    className="text-red-500 hover:text-red-700 text-sm flex items-center ml-auto font-medium"
+                  >
+                    <Trash2 className="h-4 w-4 mr-1" /> Remove
+                  </button>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Summary */}
-          <div className="w-full lg:w-96 flex-shrink-0">
-            <div className="bg-white p-8 rounded-xl border border-slate-200 shadow-lg sticky top-28">
-              <h3 className="font-bold text-slate-900 text-lg mb-6">Order Summary</h3>
-              <div className="space-y-3 mb-6 pb-6 border-b border-slate-100 text-sm text-slate-600">
-                <div className="flex justify-between"><span>Subtotal</span><span>₹{total}</span></div>
-                <div className="flex justify-between"><span>Shipping</span><span>Calculated next</span></div>
-                <div className="flex justify-between"><span>Tax (18%)</span><span>₹{(total * 0.18).toFixed(0)}</span></div>
+          <div className="lg:col-span-1">
+            <div className="bg-gray-50 p-6 border border-gray-200 sticky top-24 rounded-sm shadow-md">
+              <h2 className="text-xl font-bold text-black uppercase mb-6">Order Summary</h2>
+              <div className="flex justify-between text-gray-600 mb-4">
+                <span>Subtotal</span>
+                <span>₹{total}</span>
               </div>
-              <div className="flex justify-between font-black text-xl text-slate-900 mb-8">
+              <div className="flex justify-between text-gray-600 mb-6">
+                <span>Shipping</span>
+                <span>Calculated at next step</span>
+              </div>
+              <div className="border-t border-gray-200 pt-4 flex justify-between text-black font-bold text-xl mb-8">
                 <span>Total</span>
-                <span>₹{(total * 1.18).toFixed(0)}</span>
+                <span>₹{total}</span>
               </div>
-              <button className="w-full py-4 bg-yellow-500 hover:bg-yellow-400 text-black font-black uppercase rounded-md transition-colors">
+              <button className="w-full bg-black text-white font-bold py-4 uppercase tracking-widest hover:bg-sky-500 transition-colors shadow-lg">
                 Proceed to Checkout
               </button>
-              <div className="mt-4 text-center text-xs text-slate-400 flex items-center justify-center gap-2">
-                <Shield size={12}/> Secure B2B Checkout
-              </div>
             </div>
           </div>
         </div>

@@ -1,91 +1,93 @@
-// Frontend/src/data/products.js
-export const CATEGORIES = [
-  { id: 'solid', name: 'Solid Pearls', description: 'Single and solid color pearls.', icon: 'bg-yellow-500' },
-  { id: 'interference', name: 'Interference', description: 'Iridescent colors and finishes.', icon: 'bg-blue-500' },
-  { id: 'carbon', name: 'Carbon Pearls', description: 'Highly metallic and bold.', icon: 'bg-gray-700' },
-  { id: 'oem', name: 'OEM+ Pearls', description: 'Subtle holographic effects.', icon: 'bg-red-600' },
-  { id: 'special', name: 'Special Effect', description: 'Optically variable color changing.', icon: 'bg-indigo-600' },
-  { id: 'chroma', name: 'Chroma Pearls', description: 'Vivid multi-color shift.', icon: 'bg-emerald-500' },
-];
-
-export const PRODUCTS = [
+// Based on Xtreme Kolorz Brochure
+export const products = [
   // Solid Pearls
-  { 
-    id: 1, 
-    name: '24 Karat Gold', 
-    category: 'solid', 
-    price: 1200, 
-    rating: 5, 
-    code: 'SLD-001',
-    description: 'Pure, rich gold tone. The standard for luxury finishes. Excellent coverage and metallic brilliance.', 
-    features: ['Automotive Grade', 'UV Resistant', 'High Opacity'],
-    imageColor: 'linear-gradient(135deg, #FFD700 0%, #B8860B 100%)' 
+  {
+    id: 'solid-1',
+    name: 'Adamantium',
+    category: 'Solid Pearls',
+    price: 1499,
+    image: 'https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&q=80&w=600',
+    description: 'Single and solid color pearl. High metallic finish.',
+    tag: 'Best Seller'
   },
-  { 
-    id: 2, 
-    name: 'Carbon Red', 
-    category: 'carbon', 
-    price: 1450, 
-    rating: 4.8, 
-    code: 'CBN-004',
-    description: 'Highly metallic and bold solid red pearl. Creates a deep, blood-red finish with carbon-like shimmer.', 
-    features: ['Metallic', 'Deep Depth', '200°C Temp Rating'],
-    imageColor: 'linear-gradient(135deg, #ef4444 0%, #7f1d1d 100%)' 
+  {
+    id: 'solid-2',
+    name: 'Blue Dream',
+    category: 'Solid Pearls',
+    price: 1499,
+    image: 'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&q=80&w=600',
+    description: 'Deep, rich solid blue pearl.',
+    tag: 'New'
   },
-  // Interference
-  { 
-    id: 3, 
-    name: 'Interference Blue', 
-    category: 'interference', 
-    price: 1300, 
-    rating: 4.5, 
-    code: 'INT-022',
-    description: 'Ghost pearl that appears white/clear but reflects vivid blue under direct light. Perfect for top coats.', 
-    features: ['Ghost Effect', 'Mix with Clear', 'Subtle Shift'],
-    imageColor: 'linear-gradient(135deg, #e0f2fe 0%, #3b82f6 100%)' 
+  {
+    id: 'solid-3',
+    name: '24 Karat Gold',
+    category: 'Solid Pearls',
+    price: 1599,
+    image: 'https://images.unsplash.com/photo-1503376763036-066120622c74?auto=format&fit=crop&q=80&w=600',
+    description: 'The standard for gold automotive pearls.',
+    tag: 'Classic'
   },
-  // Special Effect
-  { 
-    id: 4, 
-    name: 'Zombie Midnight', 
-    category: 'special', 
-    price: 1800, 
-    rating: 5, 
-    code: 'SPC-089',
-    description: 'A deep, mysterious shift from dark navy to teal. Perfect for night driving aesthetics.', 
-    features: ['Color Shift', 'Dark Base Req', 'Premium Pigment'],
-    imageColor: 'linear-gradient(135deg, #0f172a 0%, #0d9488 100%)' 
+  
+  // Interference Pearls
+  {
+    id: 'int-1',
+    name: 'Abalone',
+    category: 'Interference Pearls',
+    price: 1799,
+    image: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&q=80&w=600',
+    description: 'Effect colors offering a variety of iridescent colors.',
+    tag: null
   },
-  // Chroma
-  { 
-    id: 5, 
-    name: 'Reptile Flip', 
-    category: 'chroma', 
-    price: 2800, 
-    rating: 5, 
-    code: 'CHR-007',
-    description: 'Insane color shift: Green -> Gold -> Blue. A true chroma pearl that changes with every angle.', 
-    features: ['Multi-Chrome', 'Extreme Shift', 'Show Car Quality'],
-    imageColor: 'linear-gradient(135deg, #22c55e 0%, #eab308 50%, #3b82f6 100%)' 
+  
+  // Carbon Pearls
+  {
+    id: 'carb-1',
+    name: 'Carbon Gold',
+    category: 'Carbon Pearls',
+    price: 1699,
+    image: 'https://images.unsplash.com/photo-1562911791-c7a97b729ec5?auto=format&fit=crop&q=80&w=600',
+    description: 'Highly metallic and bold solid pearl colors.',
+    tag: 'Popular'
   },
-  // OEM+
-  { 
-    id: 6, 
-    name: 'Obsidian Black', 
-    category: 'oem', 
-    price: 1100, 
-    rating: 4.7, 
-    code: 'OEM-012',
-    description: 'Deepest black with a subtle holographic sparkle. OEM+ quality for factory-match repairs with a twist.', 
-    features: ['Factory Match', 'Holographic', 'Deep Black'],
-    imageColor: 'linear-gradient(135deg, #000000 0%, #333333 100%)' 
+  {
+    id: 'carb-2',
+    name: 'Carbon Red',
+    category: 'Carbon Pearls',
+    price: 1699,
+    image: 'https://images.unsplash.com/photo-1542282088-fe8426682b8f?auto=format&fit=crop&q=80&w=600',
+    description: 'Intense metallic red finish.',
+    tag: 'Hot'
   },
-  { 
-    id: 7, name: 'Blurple', category: 'solid', price: 1250, rating: 4.6, code: 'SLD-005',
-    description: 'The perfect blend of blue and purple.', imageColor: 'linear-gradient(135deg, #3b82f6 0%, #a855f7 100%)', features: ['Vivid', 'Solid']
+
+  // Special Effect Pearls
+  {
+    id: 'spec-1',
+    name: 'Andromeda',
+    category: 'Special Effect Pearls',
+    price: 2199,
+    image: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=600',
+    description: 'Optically variable (color changing) special effect colors.',
+    tag: 'Premium'
   },
-  { 
-    id: 8, name: 'Radioactive Green', category: 'interference', price: 1500, rating: 4.9, code: 'INT-033',
-    description: 'Glowing green that pops aggressively.', imageColor: 'linear-gradient(135deg, #bef264 0%, #22c55e 100%)', features: ['Neon', 'Bright']
+  {
+    id: 'spec-2',
+    name: 'Zombie Midnight',
+    category: 'Special Effect Pearls',
+    price: 2199,
+    image: 'https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&q=80&w=600',
+    description: 'Dark shifting tones from purple to green.',
+    tag: 'Limited'
+  },
+
+  // Chroma Pearls
+  {
+    id: 'chr-1',
+    name: 'XTA Chroma',
+    category: 'Chroma Pearls',
+    price: 2999,
+    image: 'https://images.unsplash.com/photo-1566008885218-90abf9200ddb?auto=format&fit=crop&q=80&w=600',
+    description: 'The most vivid and hardest shifting pearls. Shows 5-6 colors.',
+    tag: 'Exotic'
   }
 ];
