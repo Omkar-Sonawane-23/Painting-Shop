@@ -4,20 +4,19 @@ import { ShoppingCart, Star } from 'lucide-react';
 import { CATEGORIES } from '../data/products';
 
 const ProductCard = ({ product, onViewDetails, onAddToCart }) => {
-  // Helper to safely get category name for display
   const categoryName = CATEGORIES.find(c => c.id === product.category)?.name || 'Pearl';
 
   return (
     <div className="group relative bg-white border-2 border-zinc-800 rounded-2xl overflow-hidden hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(39,39,42,1)] transition-all duration-200 h-full flex flex-col">
       
       {/* Image Section */}
-      <div className="relative aspect-square border-b-2 border-zinc-800 bg-stone-100 overflow-hidden">
+      <div className="relative aspect-square border-b-2 border-zinc-800 bg-zinc-50 overflow-hidden">
         <div 
           className="w-full h-full transform group-hover:scale-110 transition-transform duration-500" 
           style={{ background: product.imageColor }}
         ></div>
         
-        {/* Overlay Pattern (Wireframe style) */}
+        {/* Overlay Pattern */}
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/diagonal-stripes.png')] pointer-events-none"></div>
 
         <Link 
@@ -25,7 +24,7 @@ const ProductCard = ({ product, onViewDetails, onAddToCart }) => {
           className="absolute inset-0 z-10"
         />
 
-        <span className="absolute top-3 left-3 bg-white/90 border-2 border-zinc-800 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest z-20">
+        <span className="absolute top-3 left-3 bg-white/90 border-2 border-zinc-800 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest z-20 text-zinc-800 shadow-sm">
           {categoryName.split(' ')[0]}
         </span>
       </div>
@@ -33,7 +32,7 @@ const ProductCard = ({ product, onViewDetails, onAddToCart }) => {
       {/* Content Section */}
       <div className="p-5 flex flex-col flex-grow">
         <Link to={`/product/${product.id}`} className="block group-hover:text-rose-500 transition-colors">
-           <h3 className="text-lg font-black text-zinc-900 mb-1 leading-tight">{product.name}</h3>
+           <h3 className="text-lg font-black text-zinc-900 mb-1 leading-tight font-handwriting-style">{product.name}</h3>
         </Link>
         
         {/* Rating */}
@@ -58,7 +57,7 @@ const ProductCard = ({ product, onViewDetails, onAddToCart }) => {
            
            <button 
              onClick={(e) => { e.stopPropagation(); onAddToCart(product); }}
-             className="w-10 h-10 bg-yellow-400 hover:bg-yellow-300 border-2 border-zinc-800 rounded-lg flex items-center justify-center transition-colors text-zinc-900 active:scale-95"
+             className="w-10 h-10 bg-yellow-400 hover:bg-yellow-300 border-2 border-zinc-800 rounded-lg flex items-center justify-center transition-all text-zinc-900 active:scale-95 active:translate-y-[1px] shadow-[2px_2px_0px_0px_rgba(39,39,42,1)] active:shadow-none"
              title="Add to Cart"
            >
              <ShoppingCart size={20} strokeWidth={2.5} />
@@ -69,4 +68,4 @@ const ProductCard = ({ product, onViewDetails, onAddToCart }) => {
   );
 };
 
-export default ProductCard;
+export default ProductCard; 

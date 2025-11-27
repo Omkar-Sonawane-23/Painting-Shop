@@ -1,8 +1,15 @@
 import React from 'react';
-import { X, ShoppingCart, Trash2, ArrowRight } from 'lucide-react';
+import { X, ShoppingCart, Trash2, ArrowRight, Minus, Plus } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-const CartSidebar = ({ isOpen, onClose, cartItems, onRemove, onCheckout }) => {
-  const total = cartItems.reduce((acc, item) => acc + item.price, 0);
+const CartSidebar = ({ isOpen, onClose, cartItems, onRemove, onUpdateQuantity, onCheckout }) => {
+  const navigate = useNavigate();
+  const total = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+
+  const handleViewFullCart = () => {
+    onClose();
+    navigate('/cart');
+  };
 
   return (
     <div className={`fixed inset-0 z-[60] ${isOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}>
@@ -10,54 +17,108 @@ const CartSidebar = ({ isOpen, onClose, cartItems, onRemove, onCheckout }) => {
         className={`absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0'}`} 
         onClick={onClose}
       />
-      <div className={`absolute top-0 right-0 w-full max-w-full sm:max-w-md h-full bg-zinc-950 border-l border-zinc-800 shadow-2xl transform transition-transform duration-300 flex flex-col ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-        <div className="p-4 md:p-6 border-b border-zinc-800 flex justify-between items-center bg-zinc-950">
-          <h2 className="text-lg font-black text-white uppercase tracking-wide flex items-center gap-2">
-            <ShoppingCart size={18} className="text-yellow-500" /> Your Cart
+      <div className={`absolute top-0 right-0 w-full max-w-md h-full bg-[#FAF9F6] border-l-2 border-zinc-800 shadow-2xl transform transition-transform duration-300 flex flex-col ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+        
+        {/* Header */}
+        <div className="p-6 border-b-2 border-zinc-800 flex justify-between items-center bg-[#FAF9F6]">
+          <h2 className="text-xl font-black text-zinc-800 uppercase tracking-wide flex items-center gap-2 font-handwriting-style">
+            Your Cart <span className="text-sm text-zinc-500 font-sans normal-case">({cartItems.length} Items)</span>
           </h2>
-          <button onClick={onClose} className="text-zinc-500 hover:text-white transition-colors p-2 rounded-full hover:bg-zinc-900"><X size={20} /></button>
+          <button onClick={onClose} className="text-zinc-400 hover:text-red-500 transition-colors">
+            <X size={24} />
+          </button>
         </div>
         
-        <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4">
+        {/* Items */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-6">
           {cartItems.length === 0 ? (
-            <div className="h-full flex flex-col items-center justify-center text-zinc-600 space-y-4">
-              <ShoppingCart size={48} className="opacity-20" />
-              <p className="text-sm">Your cart is empty.</p>
-              <button onClick={onClose} className="text-yellow-500 text-sm font-bold hover:underline">Start Shopping</button>
+            <div className="h-full flex flex-col items-center justify-center text-zinc-500 space-y-4">
+              <ShoppingCart size={64} className="opacity-20" />
+              <p className="text-lg font-medium">Your cart is feeling light.</p>
+              <button onClick={onClose} className="text-rose-500 font-bold hover:underline">
+                Continue Shopping
+              </button>
             </div>
           ) : (
             cartItems.map((item, idx) => (
-              <div key={`${item.id}-${idx}`} className="flex gap-4 bg-zinc-900/50 p-3 rounded-xl border border-zinc-800/50 group">
-                <div className="h-16 w-16 rounded-lg bg-zinc-800 shadow-sm flex-shrink-0 overflow-hidden relative">
-                    <div className="w-full h-full" style={{ background: item.imageColor }}></div>
+              <div key={`${item.id}-${item.selectedSize}-${idx}`} className="flex gap-4 bg-white p-4 rounded-xl border-2 border-zinc-200 shadow-sm relative group">
+                
+                {/* Image */}
+                <div className="h-20 w-20 rounded-lg bg-stone-100 border border-zinc-200 overflow-hidden flex-shrink-0 relative">
+                    <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/diagonal-stripes.png')]"></div>
+                    <div className="w-full h-full transform scale-75 rounded-full shadow-inner" style={{ background: item.imageColor }}></div>
                 </div>
+
+                {/* Details */}
                 <div className="flex-1 flex flex-col justify-between">
                   <div>
-                    <h4 className="text-white font-bold text-sm line-clamp-1">{item.name}</h4>
-                    <p className="text-zinc-500 text-[10px] uppercase tracking-wider mt-1">100ml Pack</p>
+                    <h4 className="text-zinc-900 font-bold text-sm line-clamp-1 font-handwriting-style text-lg">{item.name}</h4>
+                    <div className="flex items-center gap-2 mt-1">
+                       <span className="text-[10px] font-bold uppercase tracking-wider bg-zinc-100 px-2 py-0.5 rounded border border-zinc-200 text-zinc-600">
+                         {item.selectedSize || '1 Ltr'}
+                       </span>
+                       <span className="text-xs text-zinc-400 capitalize">{item.category}</span>
+                    </div>
                   </div>
-                  <div className="flex justify-between items-end">
-                    <span className="text-yellow-500 font-mono font-bold text-sm">₹{item.price}</span>
-                    <button onClick={() => onRemove(idx)} className="text-zinc-600 hover:text-red-500 transition-colors p-1 -mr-1">
-                        <Trash2 size={14} />
-                    </button>
+                  
+                  <div className="flex justify-between items-end mt-2">
+                    {/* Quantity Controls */}
+                    <div className="flex items-center bg-white border-2 border-zinc-200 rounded-lg h-8">
+                       <button 
+                         onClick={() => onUpdateQuantity(idx, -1)}
+                         className="px-2 h-full hover:bg-zinc-100 text-zinc-500 disabled:opacity-50"
+                         disabled={item.quantity <= 1}
+                       >
+                         <Minus size={12} />
+                       </button>
+                       <span className="px-2 text-xs font-bold font-mono">{item.quantity}</span>
+                       <button 
+                         onClick={() => onUpdateQuantity(idx, 1)}
+                         className="px-2 h-full hover:bg-zinc-100 text-zinc-500"
+                       >
+                         <Plus size={12} />
+                       </button>
+                    </div>
+
+                    <span className="text-zinc-900 font-mono font-bold">₹{item.price * item.quantity}</span>
                   </div>
                 </div>
+
+                {/* Delete */}
+                <button 
+                   onClick={() => onRemove(idx)} 
+                   className="absolute -top-2 -right-2 bg-white text-zinc-400 hover:text-red-500 border-2 border-zinc-200 p-1.5 rounded-full shadow-sm transition-colors"
+                >
+                    <Trash2 size={14} />
+                </button>
               </div>
             ))
           )}
         </div>
 
+        {/* Footer */}
         {cartItems.length > 0 && (
-          <div className="p-4 md:p-6 bg-zinc-900 border-t border-zinc-800 space-y-4 safe-bottom">
+          <div className="p-6 bg-white border-t-2 border-zinc-800 space-y-4">
             <div className="flex justify-between items-center">
-              <span className="text-zinc-400 text-sm font-medium">Subtotal</span>
-              <span className="text-xl font-black text-white">₹{total}</span>
+              <span className="text-zinc-500 font-bold uppercase tracking-wider text-xs">Subtotal</span>
+              <span className="text-2xl font-black text-zinc-900 font-mono">₹{total}</span>
             </div>
-            <p className="text-[10px] text-zinc-500 text-center">Shipping & taxes calculated at checkout.</p>
-            <button onClick={onCheckout} className="w-full bg-yellow-500 hover:bg-yellow-400 text-black font-black py-4 rounded-xl uppercase tracking-wide transition-transform hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-2">
-               Checkout Now <ArrowRight size={18}/>
-            </button>
+            
+            <div className="space-y-3">
+                <button 
+                onClick={onCheckout} 
+                className="w-full bg-rose-300 hover:bg-rose-400 text-zinc-900 font-bold py-4 rounded-xl border-2 border-zinc-900 shadow-[4px_4px_0px_0px_rgba(39,39,42,1)] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_rgba(39,39,42,1)] transition-all flex items-center justify-center gap-2"
+                >
+                Proceed to Checkout <ArrowRight size={18}/>
+                </button>
+                
+                <button 
+                onClick={handleViewFullCart}
+                className="w-full bg-white hover:bg-zinc-50 text-zinc-900 font-bold py-3 rounded-xl border-2 border-zinc-900 transition-colors"
+                >
+                View Full Cart
+                </button>
+            </div>
           </div>
         )}
       </div>

@@ -4,8 +4,8 @@
 
 html, body {
   height: 100%;
-  background-color: #09090b; /* zinc-950 */
-  color: #f4f4f5; /* zinc-100 */
+  background-color: #FAF9F6; /* Off-white / Stone-50 equivalent */
+  color: #18181b; /* zinc-900 */
 }
 
 /* Custom scrollbar hiding for sleek look */
@@ -15,4 +15,9 @@ html, body {
 .hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Utility for handwriting style font if needed, or fallback to sans */
+.font-handwriting-style {
+  font-family: 'Inter', sans-serif; /* Placeholder, can be replaced with a real handwriting font */
 }

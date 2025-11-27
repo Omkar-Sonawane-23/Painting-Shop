@@ -1,23 +1,20 @@
+// Frontend/src/pages/Cart.jsx
 import React from 'react';
-import { ShoppingCart, Trash2, ArrowRight, ArrowLeft, Plus, Minus } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { ShoppingCart, Shield } from 'lucide-react';
 
-const Cart = ({ cartItems, onRemove, onUpdateQuantity, onCheckout }) => {
-  const total = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-  const tax = total * 0.18;
-  const shipping = total > 5000 ? 0 : 150;
-  const grandTotal = total + tax + shipping;
+const Cart = ({ items, removeFromCart }) => {
+  const total = items.reduce((acc, item) => acc + item.price, 0);
 
-  // Empty State
-  if (cartItems.length === 0) {
+  if (items.length === 0) {
     return (
-      <div className="max-w-7xl mx-auto py-20 px-4 min-h-[60vh] flex flex-col items-center justify-center text-center">
-        <div className="w-24 h-24 bg-zinc-100 border-2 border-zinc-800 rounded-full flex items-center justify-center mb-6 shadow-[4px_4px_0px_0px_rgba(39,39,42,1)]">
-           <ShoppingCart size={40} className="text-zinc-800" />
+      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50">
+        <div className="w-20 h-20 bg-white rounded-full border-2 border-dashed border-slate-300 flex items-center justify-center mb-6">
+          <ShoppingCart className="text-slate-300" size={32} />
         </div>
-        <h2 className="text-2xl font-black text-zinc-900 mb-2 font-handwriting-style">Your cart is empty</h2>
-        <p className="text-zinc-500 mb-8 max-w-md">Looks like you haven't added any pigments to your cart yet.</p>
-        <Link to="/shop" className="px-8 py-3 bg-rose-300 text-zinc-900 border-2 border-zinc-800 font-bold rounded-xl hover:bg-rose-400 transition-all shadow-[4px_4px_0px_0px_rgba(39,39,42,1)] active:translate-y-[2px] active:shadow-none">
+        <h2 className="text-xl font-bold text-slate-900">Your Cart is Empty</h2>
+        <p className="text-slate-500 mt-2 mb-8">Looks like you haven't added any pigments yet.</p>
+        <Link to="/shop" className="px-6 py-3 bg-slate-900 text-white font-bold text-sm uppercase rounded-md">
           Start Shopping
         </Link>
       </div>
@@ -25,94 +22,55 @@ const Cart = ({ cartItems, onRemove, onUpdateQuantity, onCheckout }) => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 min-h-screen bg-[#FAF9F6]">
-      
-      <div className="text-center mb-10">
-        <h1 className="text-3xl md:text-4xl font-black text-zinc-800 mb-2 font-handwriting-style">Cart</h1>
-      </div>
-
-      <div className="flex flex-col lg:flex-row gap-12 items-start">
+    <div className="pt-24 pb-20 bg-slate-50 min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 className="text-3xl font-black text-slate-900 uppercase tracking-tight mb-10">Shopping Cart</h1>
         
-        {/* 1. Cart Items List (Wireframe style) */}
-        <div className="flex-1 space-y-6">
-          {cartItems.map((item, idx) => (
-            <div key={`${item.id}-${item.selectedSize}-${idx}`} className="flex flex-col sm:flex-row gap-6 p-6 bg-white border-2 border-zinc-800 rounded-2xl items-center shadow-[4px_4px_0px_0px_rgba(39,39,42,1)] relative">
-              
-              {/* Image */}
-              <div className="w-full sm:w-40 h-32 bg-blue-50/50 border-2 border-zinc-800 rounded-xl overflow-hidden relative flex-shrink-0">
-                 <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/diagonal-stripes.png')]"></div>
-                 <div className="w-full h-full transform scale-75 rounded-full shadow-2xl" style={{ background: item.imageColor }}></div>
-              </div>
-
-              {/* Details */}
-              <div className="flex-1 w-full">
-                <div className="flex justify-between items-start mb-2">
+        <div className="flex flex-col lg:flex-row gap-12">
+          {/* Items */}
+          <div className="flex-1 space-y-4">
+            {items.map((item, idx) => (
+              <div key={idx} className="bg-white p-4 rounded-xl border border-slate-200 flex items-center gap-6 shadow-sm">
+                <div className="w-20 h-20 rounded-lg bg-slate-100 flex-shrink-0 overflow-hidden" style={{ background: item.imageColor }}></div>
+                <div className="flex-1">
+                  <div className="flex justify-between items-start">
                     <div>
-                        <h3 className="text-xl font-black text-zinc-800 font-handwriting-style">{item.name}</h3>
-                        <p className="text-sm text-zinc-500 font-bold uppercase tracking-wider">Category: {item.category}</p>
+                      <h3 className="font-bold text-slate-900 text-lg">{item.name}</h3>
+                      <p className="text-sm text-slate-500 uppercase tracking-wider">{item.category} Pearl</p>
                     </div>
-                    <button 
-                        onClick={() => onRemove(idx)}
-                        className="p-2 text-white bg-red-500 border-2 border-zinc-900 hover:bg-red-600 rounded-lg transition-colors shadow-sm"
-                    >
-                        <Trash2 size={18} />
-                    </button>
+                    <span className="font-mono font-bold text-slate-900">₹{item.price}</span>
+                  </div>
+                  <div className="flex justify-between items-center mt-4">
+                    <span className="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded font-medium">100g Pack</span>
+                    <button onClick={() => removeFromCart(idx)} className="text-xs text-red-500 font-bold hover:underline">Remove</button>
+                  </div>
                 </div>
+              </div>
+            ))}
+          </div>
 
-                {/* Size Selector Display (Wireframe style) */}
-                <div className="flex gap-2 my-3">
-                    {['1 Ltr', '2 Ltr', '3 Ltr'].map(size => (
-                        <div key={size} className={`px-3 py-1 rounded-lg border-2 text-xs font-bold ${item.selectedSize === size ? 'bg-blue-200 border-zinc-800 text-zinc-900' : 'bg-transparent border-zinc-300 text-zinc-400'}`}>
-                            {size}
-                        </div>
-                    ))}
-                </div>
-
-                <div className="flex items-center justify-between mt-4">
-                    <span className="text-xl font-mono font-bold text-zinc-800">₹ {item.price} / Ltr</span>
-                    
-                    {/* Quantity */}
-                    <div className="flex items-center bg-zinc-100 border-2 border-zinc-800 rounded-lg h-10">
-                        <button onClick={() => onUpdateQuantity(idx, -1)} className="px-3 h-full hover:bg-zinc-200 border-r-2 border-zinc-800" disabled={item.quantity <= 1}><Minus size={14}/></button>
-                        <span className="px-4 font-bold">{item.quantity}</span>
-                        <button onClick={() => onUpdateQuantity(idx, 1)} className="px-3 h-full hover:bg-zinc-200 border-l-2 border-zinc-800"><Plus size={14}/></button>
-                    </div>
-                </div>
+          {/* Summary */}
+          <div className="w-full lg:w-96 flex-shrink-0">
+            <div className="bg-white p-8 rounded-xl border border-slate-200 shadow-lg sticky top-28">
+              <h3 className="font-bold text-slate-900 text-lg mb-6">Order Summary</h3>
+              <div className="space-y-3 mb-6 pb-6 border-b border-slate-100 text-sm text-slate-600">
+                <div className="flex justify-between"><span>Subtotal</span><span>₹{total}</span></div>
+                <div className="flex justify-between"><span>Shipping</span><span>Calculated next</span></div>
+                <div className="flex justify-between"><span>Tax (18%)</span><span>₹{(total * 0.18).toFixed(0)}</span></div>
+              </div>
+              <div className="flex justify-between font-black text-xl text-slate-900 mb-8">
+                <span>Total</span>
+                <span>₹{(total * 1.18).toFixed(0)}</span>
+              </div>
+              <button className="w-full py-4 bg-yellow-500 hover:bg-yellow-400 text-black font-black uppercase rounded-md transition-colors">
+                Proceed to Checkout
+              </button>
+              <div className="mt-4 text-center text-xs text-slate-400 flex items-center justify-center gap-2">
+                <Shield size={12}/> Secure B2B Checkout
               </div>
             </div>
-          ))}
-
-          {/* Action Buttons (Wireframe specific) */}
-          <div className="flex flex-col items-center gap-4 mt-8">
-            <button onClick={onCheckout} className="w-full max-w-md bg-rose-300 hover:bg-rose-400 text-zinc-900 font-bold py-4 rounded-xl border-2 border-zinc-800 shadow-[4px_4px_0px_0px_rgba(39,39,42,1)] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_rgba(39,39,42,1)] transition-all uppercase tracking-widest">
-                Proceed to Checkout
-            </button>
-            <Link to="/shop" className="w-full max-w-md bg-white hover:bg-zinc-50 text-zinc-900 font-bold py-4 rounded-xl border-2 border-zinc-800 shadow-[4px_4px_0px_0px_rgba(39,39,42,1)] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_rgba(39,39,42,1)] transition-all uppercase tracking-widest text-center">
-                Continue Shopping
-            </Link>
           </div>
         </div>
-
-        {/* 2. Right Column (Summary / Links - Matching wireframe structure) */}
-        <div className="hidden lg:block w-96 flex-shrink-0">
-             {/* This space is essentially empty in the specific 'cart page' wireframe 
-                 aside from the footer links shown in the screenshot. 
-                 I've integrated the summary logic into the main flow or could put it here. 
-                 Given the wireframe is centered, I focused the main content above. 
-                 For a real app, you usually want a summary here. */}
-             <div className="bg-white border-2 border-zinc-800 rounded-2xl p-6 shadow-[4px_4px_0px_0px_rgba(39,39,42,1)]">
-                <h3 className="font-black text-xl mb-4 font-handwriting-style">Summary</h3>
-                <div className="space-y-2 text-sm mb-4">
-                    <div className="flex justify-between"><span>Subtotal</span><span>₹{total}</span></div>
-                    <div className="flex justify-between"><span>Tax</span><span>₹{tax.toFixed(0)}</span></div>
-                    <div className="flex justify-between"><span>Shipping</span><span>{shipping}</span></div>
-                </div>
-                <div className="border-t-2 border-zinc-800 pt-2 flex justify-between font-bold text-lg">
-                    <span>Total</span><span>₹{grandTotal.toFixed(0)}</span>
-                </div>
-             </div>
-        </div>
-
       </div>
     </div>
   );

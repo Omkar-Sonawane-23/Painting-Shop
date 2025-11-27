@@ -1,90 +1,118 @@
+// Frontend/src/pages/ProductPage.jsx
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ChevronRight, Star, ShoppingCart, ShieldCheck, Droplet, Layers, Loader } from 'lucide-react';
-import { CATEGORIES, INITIAL_PRODUCTS } from '../data/products';
+import { ChevronRight, Star, ShoppingCart, ShieldCheck, Droplet, Layers, Download, CheckCircle } from 'lucide-react';
+import { CATEGORIES, PRODUCTS } from '../data/products';
 
-const ProductPage = ({ addToCart, products }) => {
+const ProductPage = ({ addToCart }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
 
   useEffect(() => {
     const productId = parseInt(id);
-    const foundProduct = products.find(p => p.id === productId) || INITIAL_PRODUCTS.find(p => p.id === productId);
+    const foundProduct = PRODUCTS.find(p => p.id === productId);
     setProduct(foundProduct);
     window.scrollTo(0,0);
-  }, [id, products]);
+  }, [id]);
 
   if (!product) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader className="animate-spin text-yellow-500" size={40} />
-      </div>
-    );
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   }
 
   const categoryName = CATEGORIES.find(c => c.id === product.category)?.name;
 
   return (
-    <div className="max-w-7xl mx-auto py-6 md:py-12 px-4 sm:px-6 lg:px-8 min-h-screen animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <button 
-        onClick={() => navigate(-1)} 
-        className="flex items-center text-zinc-400 hover:text-white mb-6 md:mb-8 transition-colors text-xs md:text-sm font-bold uppercase group"
-      >
-        <ChevronRight className="rotate-180 mr-1 md:mr-2 group-hover:-translate-x-1 transition-transform" size={14} /> Back
-      </button>
+    <div className="pt-24 pb-20 bg-white min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Breadcrumb */}
+        <button 
+          onClick={() => navigate(-1)} 
+          className="flex items-center text-slate-400 hover:text-slate-900 mb-8 transition-colors text-xs font-bold uppercase group"
+        >
+          <ChevronRight className="rotate-180 mr-1 group-hover:-translate-x-1 transition-transform" size={14} /> Back
+        </button>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
-        {/* Product Image */}
-        <div className="relative rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl aspect-square border border-zinc-800 bg-zinc-900 group">
-          <div className="w-full h-full group-hover:scale-105 transition-transform duration-1000" style={{ background: product.imageColor }}></div>
-          <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-black/60 pointer-events-none"></div>
-        </div>
-
-        {/* Details */}
-        <div className="flex flex-col pt-2 md:pt-4">
-          <div className="flex flex-wrap items-center gap-3 mb-3 md:mb-4">
-             <span className="px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-yellow-500 font-bold tracking-widest uppercase text-[10px]">{categoryName}</span>
-             {product.rating >= 5 && <span className="px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-500 font-bold uppercase text-[10px]">Best Seller</span>}
-          </div>
-          
-          <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white mb-4 leading-tight">{product.name}</h1>
-          
-          <div className="flex items-center mb-6 md:mb-8 space-x-6 border-b border-zinc-900 pb-6 md:pb-8">
-            <div className="flex text-yellow-500 gap-1">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} size={18} fill={i < product.rating ? "currentColor" : "none"} className={i >= product.rating ? "text-zinc-800" : ""} />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          {/* Image Gallery */}
+          <div className="space-y-4">
+            <div className="aspect-square rounded-2xl overflow-hidden border border-slate-200 shadow-lg relative bg-slate-100">
+               <div className="w-full h-full" style={{ background: product.imageColor }}></div>
+               {/* Zoom Hint */}
+               <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-slate-600 shadow-sm pointer-events-none">
+                 High Definition Pearl
+               </div>
+            </div>
+            <div className="grid grid-cols-4 gap-4">
+              {[1,2,3,4].map(i => (
+                <div key={i} className="aspect-square rounded-lg border border-slate-200 bg-slate-50 cursor-pointer hover:border-slate-900"></div>
               ))}
             </div>
-            <span className="text-zinc-500 text-xs md:text-sm font-medium">124 Reviews</span>
           </div>
 
-          <p className="text-zinc-300 text-base md:text-lg leading-relaxed font-light mb-8 md:mb-10">
-            {product.description || `Experience the intense depth and brilliance of our ${categoryName}. Engineered for smooth application and extreme durability.`}
-          </p>
-
-          <div className="grid grid-cols-3 gap-3 md:gap-4 mb-8 md:mb-10">
-             {['UV Resistant', 'High Coverage', 'Automotive Grade'].map((feat, i) => (
-               <div key={i} className="flex flex-col items-center text-center p-3 md:p-4 bg-zinc-900/50 rounded-xl border border-zinc-800">
-                  {i === 0 && <ShieldCheck className="text-zinc-400 mb-2 w-5 h-5 md:w-6 md:h-6" />}
-                  {i === 1 && <Droplet className="text-zinc-400 mb-2 w-5 h-5 md:w-6 md:h-6" />}
-                  {i === 2 && <Layers className="text-zinc-400 mb-2 w-5 h-5 md:w-6 md:h-6" />}
-                  <span className="text-[10px] md:text-xs font-bold text-zinc-300 uppercase leading-tight">{feat}</span>
-               </div>
-             ))}
-          </div>
-
-          <div className="mt-auto bg-zinc-900/50 p-5 md:p-6 rounded-2xl md:rounded-3xl border border-zinc-800">
-            <div className="flex items-baseline gap-3 mb-6">
-              <span className="text-3xl md:text-4xl font-black text-white">₹{product.price}</span>
-              <span className="text-zinc-600 text-xs md:text-lg uppercase font-bold">Per 100ml</span>
+          {/* Details */}
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800 border border-slate-200 uppercase tracking-wide">
+                {categoryName}
+              </span>
+              <span className="text-xs font-bold text-green-600 flex items-center gap-1"><CheckCircle size={12}/> In Stock</span>
             </div>
-            <button 
-              onClick={() => addToCart(product)}
-              className="w-full bg-white hover:bg-zinc-200 text-black font-black py-4 md:py-5 px-8 rounded-xl md:rounded-2xl shadow-xl flex items-center justify-center gap-3 text-base md:text-lg uppercase transition-all hover:-translate-y-1 active:scale-95"
-            >
-              <ShoppingCart size={20} className="md:w-[22px] md:h-[22px]" /> Add to Cart
-            </button>
+            
+            <h1 className="text-4xl font-black text-slate-900 mb-2 uppercase tracking-tight">{product.name}</h1>
+            <p className="text-sm font-mono text-slate-500 mb-6">SKU: {product.code}</p>
+
+            <div className="flex items-center gap-4 mb-8 pb-8 border-b border-slate-100">
+              <div>
+                <span className="text-3xl font-black text-slate-900">₹{product.price}</span>
+                <span className="text-sm text-slate-500 ml-2">/ 100g</span>
+              </div>
+              <div className="h-8 w-px bg-slate-200"></div>
+              <div className="text-sm text-slate-600">
+                <strong>Bulk Price:</strong> <span className="text-yellow-600 cursor-pointer hover:underline">Login for trade rates</span>
+              </div>
+            </div>
+
+            <p className="text-slate-600 text-lg leading-relaxed mb-8">
+              {product.description} Ideal for automotive finishes, liquid wraps, and industrial powder coating.
+            </p>
+
+            {/* Technical Specs */}
+            <div className="bg-slate-50 rounded-xl p-6 border border-slate-100 mb-8">
+              <h4 className="font-bold text-slate-900 mb-4 text-sm uppercase">Product Features</h4>
+              <ul className="grid grid-cols-2 gap-y-3 gap-x-4">
+                {product.features?.map(f => (
+                  <li key={f} className="flex items-center gap-2 text-sm text-slate-600">
+                    <div className="w-1.5 h-1.5 bg-yellow-500 rounded-full"></div> {f}
+                  </li>
+                ))}
+                <li className="flex items-center gap-2 text-sm text-slate-600"><div className="w-1.5 h-1.5 bg-yellow-500 rounded-full"></div> Non-Toxic</li>
+                <li className="flex items-center gap-2 text-sm text-slate-600"><div className="w-1.5 h-1.5 bg-yellow-500 rounded-full"></div> 600°F Temp Res</li>
+              </ul>
+            </div>
+
+            {/* Actions */}
+            <div className="flex flex-col sm:flex-row gap-4 mb-8">
+              <div className="flex items-center border border-slate-300 rounded-md w-32">
+                <button className="px-3 py-2 text-slate-500 hover:bg-slate-100 font-bold">-</button>
+                <input type="text" defaultValue="1" className="w-full text-center text-slate-900 font-bold outline-none border-x border-slate-300 h-full" readOnly />
+                <button className="px-3 py-2 text-slate-500 hover:bg-slate-100 font-bold">+</button>
+              </div>
+              <button onClick={() => addToCart(product)} className="flex-1 py-4 bg-slate-900 text-white hover:bg-slate-800 border border-slate-900 rounded-md shadow-xl shadow-yellow-500/10 font-bold text-sm uppercase tracking-wide flex items-center justify-center gap-2 transition-all">
+                <ShoppingCart size={18} /> Add to Cart
+              </button>
+            </div>
+
+            <div className="flex items-center gap-4">
+               <button className="flex-1 py-3 bg-white text-slate-600 border border-slate-300 hover:border-slate-900 rounded-md font-bold text-xs uppercase tracking-wide flex items-center justify-center gap-2 transition-all">
+                 <Download size={16} /> Download TDS
+               </button>
+               <button className="flex-1 py-3 bg-white text-slate-600 border border-slate-300 hover:border-slate-900 rounded-md font-bold text-xs uppercase tracking-wide flex items-center justify-center gap-2 transition-all">
+                 <Download size={16} /> Download SDS
+               </button>
+            </div>
+
           </div>
         </div>
       </div>
