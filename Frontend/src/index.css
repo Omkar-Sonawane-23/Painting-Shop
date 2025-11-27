@@ -21,3 +21,26 @@ html, body {
 .font-handwriting-style {
   font-family: 'Inter', sans-serif; /* Placeholder, can be replaced with a real handwriting font */
 }
+/* Sketch-style dotted background */
+.sketch-pattern {
+  background-image: url("https://www.toptal.com/designers/subtlepatterns/uploads/dot-grid.png");
+  background-size: 120px;
+}
+
+.sketch-pattern-pink {
+  background-image: url("https://www.toptal.com/designers/subtlepatterns/uploads/dot-grid.png");
+  background-size: 120px;
+}
+.sketch-pattern {
+  background-image: url("https://www.toptal.com/designers/subtlepatterns/uploads/dot-grid.png");
+  background-size: 120px;
+}
+
+.sketch-pattern-pink {
+  background-image: url("https://www.toptal.com/designers/subtlepatterns/uploads/dot-grid.png");
+  background-size: 120px;
+}
+.sketch-pattern-blue {
+  background-image: url("https://www.toptal.com/designers/subtlepatterns/uploads/dot-grid.png");
+  background-size: 120px;
+}
