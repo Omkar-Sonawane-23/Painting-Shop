@@ -1,13 +1,28 @@
-import React from 'react';
+// File: Frontend/src/pages/ProductPage.jsx
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { ShoppingCart, Truck, ShieldCheck, Droplets } from 'lucide-react';
+import { ShoppingCart, Truck, ShieldCheck, Droplets, Plus, Minus, Microscope, Palette } from 'lucide-react'; 
 import { products } from '../data/products.js';
 
 const ProductPage = ({ onAddToCart }) => {
   const { id } = useParams();
+  // Find the product and include a safety check for quantity
   const product = products.find(p => p.id === id);
+  const [quantity, setQuantity] = useState(1); 
 
   if (!product) return <div className="text-black text-center py-20">Product not found</div>;
+
+  const handleAddToCart = () => {
+    onAddToCart(product, quantity);
+    setQuantity(1); 
+  };
+
+  const incrementQuantity = () => setQuantity(prev => prev + 1);
+  const decrementQuantity = () => setQuantity(prev => Math.max(1, prev - 1));
+
+  // The price per unit of 100ml
+  const unitPrice = product.price; 
+  const currentTotalPrice = unitPrice * quantity;
 
   return (
     <div className="bg-white min-h-screen py-12">
@@ -16,40 +31,97 @@ const ProductPage = ({ onAddToCart }) => {
           
           {/* Image Gallery */}
           <div className="space-y-4">
-            <div className="bg-gray-100 border border-gray-200 rounded-sm overflow-hidden p-8 flex items-center justify-center">
+            <div className="bg-gray-100 border border-gray-200 rounded-lg overflow-hidden p-8 flex items-center justify-center shadow-lg">
               <img 
                 src={product.image} 
                 alt={product.name} 
-                className="w-full h-auto object-cover mix-blend-multiply"
+                className="w-full h-auto object-cover mix-blend-multiply rounded-lg"
+                onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/600x600/e5e7eb/4b5563?text=Xtreme+Kolorz"; }}
               />
             </div>
             <div className="grid grid-cols-4 gap-4">
               {[1, 2, 3, 4].map(i => (
-                <div key={i} className="bg-gray-100 aspect-w-1 aspect-h-1 border border-gray-200 hover:border-sky-500 cursor-pointer p-2">
-                  <img src={product.image} alt="Thumbnail" className="w-full h-full object-cover mix-blend-multiply" />
+                <div key={i} className="bg-gray-100 aspect-square border border-gray-200 hover:border-sky-500 cursor-pointer p-2 rounded-lg transition-colors">
+                  {/* Using placeholder images for thumbnails */}
+                  <img 
+                    src={`https://placehold.co/100x100/e5e7eb/4b5563?text=Sample+${i}`} 
+                    alt="Thumbnail" 
+                    className="w-full h-full object-cover" 
+                    onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/100x100/e5e7eb/4b5563?text=Error"; }}
+                  />
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Product Info */}
+          {/* Product Info & Purchase Controls */}
           <div className="text-black">
             <p className="text-sky-500 font-bold uppercase tracking-wider text-sm mb-2">{product.category}</p>
-            <h1 className="text-4xl font-black italic mb-4">{product.name}</h1>
-            <p className="text-2xl font-mono mb-6 font-bold">₹{product.price} <span className="text-sm text-gray-500 font-sans font-normal ml-2">/ 100ml</span></p>
+            <h1 className="text-4xl font-black italic mb-2">{product.name}</h1>
+            
+            {/* Price section */}
+            <p className="text-xl font-mono mb-6 font-bold">
+              Unit Price: ₹{unitPrice} / 100ml 
+            </p>
             
             <p className="text-gray-600 mb-8 leading-relaxed">
               {product.description} Ideal for automotive customization. Can be used for special effect finishes over a base coat.
             </p>
 
-            <button 
-              onClick={() => onAddToCart(product)}
-              className="w-full bg-black text-white font-bold py-4 uppercase tracking-widest hover:bg-sky-500 transition-colors flex items-center justify-center mb-8 shadow-lg"
-            >
-              <ShoppingCart className="mr-2 h-5 w-5" /> Add to Cart
-            </button>
+            {/* Quantity Selector and Total Price */}
+            <div className="flex items-center space-x-6 mb-8">
+              <div className="flex items-center border border-gray-300 rounded-sm">
+                <button 
+                  onClick={decrementQuantity} 
+                  className="p-3 text-black hover:bg-gray-100 transition-colors disabled:opacity-50"
+                  disabled={quantity === 1}
+                >
+                  <Minus className="h-4 w-4" />
+                </button>
+                <input 
+                  type="number" 
+                  value={quantity}
+                  onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                  className="w-16 text-center text-black font-bold focus:outline-none bg-white"
+                  min="1"
+                />
+                <button 
+                  onClick={incrementQuantity} 
+                  className="p-3 text-black hover:bg-gray-100 transition-colors"
+                >
+                  <Plus className="h-4 w-4" />
+                </button>
+              </div>
+              <p className="text-2xl font-black italic">
+                Total: <span className="text-sky-500 font-mono">₹{currentTotalPrice}</span>
+              </p>
+            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 border-t border-gray-200 pt-8">
+            <button 
+              onClick={handleAddToCart}
+              className="w-full bg-black text-white font-bold py-4 uppercase tracking-widest hover:bg-sky-500 transition-colors flex items-center justify-center mb-8 shadow-lg rounded-sm"
+            >
+              <ShoppingCart className="mr-2 h-5 w-5" /> Add {quantity} x 100ml to Cart
+            </button>
+            
+            {/* Technical Specifications / Shade Details */}
+            <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 shadow-inner">
+                <div className="flex items-center mb-3">
+                    <Microscope className="h-6 w-6 text-red-600 mr-3" />
+                    <h4 className="font-black text-black uppercase text-sm">Pigment Technology (Shade Details)</h4>
+                </div>
+                <p className="text-sm text-gray-700 leading-relaxed">
+                    This **{product.category}** pigment is a very fine inorganic, mica-based tinter coated with metal oxides. It is semi-transparent, allowing you to use different colored base coats for unique, customized shade results. 
+                </p>
+                <ul className="mt-4 space-y-1 text-sm text-gray-600">
+                    <li className='flex items-center'><Palette className='h-4 w-4 mr-2 text-sky-500'/> **Color Depth:** Enhanced layering for intense, non-flat color.</li>
+                    <li className='flex items-center'><Droplets className='h-4 w-4 mr-2 text-sky-500'/> **Base Coat Compatibility:** Works best over medium-to-dark base coats (varies by pearl type).</li>
+                </ul>
+            </div>
+
+
+            {/* Shipping & Mixing Features Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 border-t border-gray-200 pt-8 mt-8">
               <div className="flex flex-col items-center text-center">
                 <Droplets className="h-8 w-8 text-sky-500 mb-3" />
                 <h4 className="font-bold text-sm uppercase">Mixing</h4>

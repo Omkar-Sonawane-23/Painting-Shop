@@ -1,15 +1,24 @@
+// File: Frontend/src/components/Navbar.jsx
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { ShoppingCart, Search, Menu, X, User } from 'lucide-react';
 
 const Navbar = ({ cartCount }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
+
+  const navLinks = [
+    { name: 'About Us', path: '/about' }, // New Link
+    { name: 'Shop Colors', path: '/shop' },
+    { name: 'Services', path: '/services' }, // Updated Link
+    { name: 'Contact Us', path: '/contact' },
+  ];
 
   return (
-    <nav className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
-      {/* Top Banner - Kept Red for contrast as per original branding, or can be light blue if preferred. Keeping it red for 'Sale' urgency but clean. */}
-      <div className="bg-black text-white text-xs font-bold text-center py-2 px-4 tracking-widest">
-        HUGE SAVINGS UP TO 30% SITEWIDE | BLACK FRIDAY IS LIVE
+    <nav className="bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-50 shadow-lg">
+      {/* Top Banner: Adjusted for better mobile wrapping and visibility */}
+      <div className="bg-black text-sky-400 text-[10px] sm:text-xs font-bold text-center py-2 px-4 tracking-wide sm:tracking-widest overflow-hidden">
+        HUGE SAVINGS UP TO 30% SITEWIDE | FREE SHIPPING ON ORDERS OVER ₹5000
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -23,7 +32,7 @@ const Navbar = ({ cartCount }) => {
           </Link>
 
           {/* Desktop Search */}
-          <div className="hidden md:flex flex-1 max-w-lg mx-8 relative">
+          <div className="hidden lg:flex flex-1 max-w-lg mx-8 relative">
             <input
               type="text"
               placeholder="Search for Adamantium, Blue Dream..."
@@ -34,14 +43,27 @@ const Navbar = ({ cartCount }) => {
 
           {/* Desktop Links */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link to="/shop" className="text-black hover:text-sky-500 font-bold uppercase tracking-wider text-sm transition-colors">Shop Colors</Link>
-            <Link to="/contact" className="text-black hover:text-sky-500 font-bold uppercase tracking-wider text-sm transition-colors">Contact</Link>
+            <Link to="/" className={`text-black hover:text-sky-500 font-bold uppercase tracking-wider text-sm transition-colors ${
+                  location.pathname === '/' ? 'text-sky-500' : ''
+                }`}>Home</Link>
+            {navLinks.map((link) => (
+              <Link 
+                key={link.name} 
+                to={link.path} 
+                className={`text-black hover:text-sky-500 font-bold uppercase tracking-wider text-sm transition-colors ${
+                  location.pathname === link.path ? 'text-sky-500' : ''
+                }`}
+              >
+                {link.name}
+              </Link>
+            ))}
+            
             <div className="flex items-center space-x-4">
               <User className="h-6 w-6 text-black cursor-pointer hover:text-sky-500 transition-colors" />
-              <Link to="/cart" className="relative group">
+              <Link to="/cart" className="relative group p-1 -m-1">
                 <ShoppingCart className="h-6 w-6 text-black group-hover:text-sky-500 transition-colors" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-sky-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-black rounded-full h-5 w-5 flex items-center justify-center">
                     {cartCount}
                   </span>
                 )}
@@ -49,10 +71,18 @@ const Navbar = ({ cartCount }) => {
             </div>
           </div>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden flex items-center">
-            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-black hover:text-sky-500">
-              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          {/* Mobile menu button & Cart icon */}
+          <div className="md:hidden flex items-center space-x-4">
+            <Link to="/cart" className="relative">
+                <ShoppingCart className="h-6 w-6 text-black hover:text-sky-500 transition-colors" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-black rounded-full h-5 w-5 flex items-center justify-center">
+                    {cartCount}
+                  </span>
+                )}
+            </Link>
+            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-black hover:text-sky-500 p-1 -m-1">
+              {isMenuOpen ? <X className="h-7 w-7" /> : <Menu className="h-7 w-7" />}
             </button>
           </div>
         </div>
@@ -60,11 +90,19 @@ const Navbar = ({ cartCount }) => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 shadow-xl">
+        <div className="md:hidden absolute top-full left-0 right-0 bg-white border-t border-gray-100 shadow-xl">
           <div className="px-4 pt-2 pb-6 space-y-1">
-            <Link to="/" className="block px-3 py-3 text-black font-bold border-b border-gray-100 hover:text-sky-500">Home</Link>
-            <Link to="/shop" className="block px-3 py-3 text-black font-bold border-b border-gray-100 hover:text-sky-500">Shop All Colors</Link>
-            <Link to="/contact" className="block px-3 py-3 text-black font-bold hover:text-sky-500">Contact Us</Link>
+            <Link to="/" onClick={() => setIsMenuOpen(false)} className="block px-3 py-3 text-black font-bold border-b border-gray-100 hover:text-sky-500 uppercase">Home</Link>
+            {navLinks.map((link) => (
+              <Link 
+                key={link.name} 
+                to={link.path} 
+                onClick={() => setIsMenuOpen(false)}
+                className="block px-3 py-3 text-black font-bold border-b border-gray-100 hover:text-sky-500 uppercase"
+              >
+                {link.name}
+              </Link>
+            ))}
           </div>
         </div>
       )}
