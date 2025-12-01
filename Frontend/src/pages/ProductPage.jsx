@@ -1,16 +1,23 @@
 // File: Frontend/src/pages/ProductPage.jsx
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { ShoppingCart, Truck, ShieldCheck, Droplets, Plus, Minus, Microscope, Palette } from 'lucide-react'; 
-import { products } from '../data/products.js';
+import { useParams, Link } from 'react-router-dom';
+import { ShoppingCart, Truck, ShieldCheck, Droplets, Plus, Minus, Microscope, Palette, ChevronRight, ArrowRight } from 'lucide-react'; 
+import { products } from '../data/products'; // Removed .js extension
+import ProductCard from '../components/ProductCard'; // Removed .jsx extension
 
 const ProductPage = ({ onAddToCart }) => {
   const { id } = useParams();
-  // Find the product and include a safety check for quantity
-  const product = products.find(p => p.id === id);
   const [quantity, setQuantity] = useState(1); 
+  
+  // 1. Find the current product
+  const product = products.find(p => p.id === id);
 
   if (!product) return <div className="text-black text-center py-20">Product not found</div>;
+
+  // 2. Filter related products (same category, excluding current product)
+  const recommendedProducts = products
+    .filter(p => p.category === product.category && p.id !== product.id)
+    .slice(0, 4); // Limit to 4 recommended items
 
   const handleAddToCart = () => {
     onAddToCart(product, quantity);
@@ -20,13 +27,22 @@ const ProductPage = ({ onAddToCart }) => {
   const incrementQuantity = () => setQuantity(prev => prev + 1);
   const decrementQuantity = () => setQuantity(prev => Math.max(1, prev - 1));
 
-  // The price per unit of 100ml
   const unitPrice = product.price; 
   const currentTotalPrice = unitPrice * quantity;
 
   return (
     <div className="bg-white min-h-screen py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Breadcrumbs */}
+         <div className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-6 flex items-center space-x-1">
+           <Link to="/" className="hover:text-black">Home</Link>
+           <ChevronRight size={12} />
+           <Link to="/shop" className="hover:text-black">Shop</Link>
+           <ChevronRight size={12} />
+           <span className="text-black">{product.name}</span>
+         </div>
+         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           
           {/* Image Gallery */}
@@ -141,6 +157,31 @@ const ProductPage = ({ onAddToCart }) => {
           </div>
 
         </div>
+
+        {/* --- Recommended Products Section (New) --- */}
+        {recommendedProducts.length > 0 && (
+          <div className="mt-20 border-t border-gray-200 pt-16">
+            <h2 className="text-3xl font-black text-black italic uppercase mb-10 text-center">
+              More {product.category} Pigments
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {recommendedProducts.map(recProduct => (
+                <ProductCard key={recProduct.id} product={recProduct} onAddToCart={onAddToCart} />
+              ))}
+            </div>
+            
+            <div className="text-center mt-12">
+               <Link 
+                to="/shop" 
+                state={{ category: product.category }}
+                className="inline-flex items-center text-black font-black hover:text-sky-500 uppercase tracking-wider text-base transition-colors border-b-2 border-black hover:border-sky-500"
+              >
+                View All {product.category} <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   );
