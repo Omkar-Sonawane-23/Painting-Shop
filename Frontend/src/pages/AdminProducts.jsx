@@ -1,39 +1,82 @@
-// File: Frontend/src/pages/AdminProducts.jsx'
+// File: Frontend/src/pages/AdminProducts.jsx
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext.jsx';
-import { Plus, Trash2, Edit, Save, X } from 'lucide-react';
+import { useAuth } from '../context/AuthContext'; // FIX: Removed .jsx extension
+import { Plus, Trash2, Edit, Save, X, ArrowRight } from 'lucide-react';
 
-// --- Mock MongoDB Data Store (Simulated Persistent Data) ---
-const mockProducts = [
-    { id: 'mongo-1', name: 'Adamantium', category: 'Solid Pearls', price: 1499, image: 'url', description: 'Simulated MongoDB Product' },
-    { id: 'mongo-2', name: 'XTA Chroma', category: 'Chroma Pearls', price: 2999, image: 'url', description: 'Simulated MongoDB Product' },
-];
-let currentProductId = 3;
+// --- Backend URL Configuration ---
+// IMPORTANT: In a real Vite app, you would use import.meta.env.VITE_BACKEND_URL.
+// For this self-contained file, we define a placeholder constant.
+// Replace this with your actual Node/MongoDB server URL.
+const BACKEND_URL = "http://localhost:5000/api"; 
+const API_PRODUCTS_ENDPOINT = `${BACKEND_URL}/products`;
 
-// --- Mock Product API Calls ---
+// --- Mock Product API Calls (Updated to use fetch and external URL) ---
+// ... (rest of mock API functions remain the same)
+
 const mockFetchProducts = async () => {
-    await new Promise(resolve => setTimeout(resolve, 500));
-    return mockProducts;
-};
+    try {
+        // Simulates GET /api/products
+        const response = await fetch(API_PRODUCTS_ENDPOINT, {
+            headers: {
+                'Authorization': `Bearer mock-admin-token`, // Include token if necessary
+            },
+        });
+        
+        // --- SIMULATION ONLY ---
+        // In a live environment, if fetch fails, this mock data ensures the UI works
+        if (!response.ok) {
+            console.warn(`[API WARNING] GET ${API_PRODUCTS_ENDPOINT} failed. Using mock local data.`);
+            await new Promise(resolve => setTimeout(resolve, 500)); 
+            return [
+                { id: 'mock-1', name: 'Adamantium', category: 'Solid Pearls', price: 1499, image: 'https://placehold.co/100/e5e7eb/4b5563?text=Mock+Data', description: 'Mock: Please run Node.js Backend' },
+                { id: 'mock-2', name: 'XTA Chroma', category: 'Chroma Pearls', price: 2999, image: 'https://placehold.co/100/e5e7eb/4b5563?text=Mock+Data', description: 'Mock: Please run Node.js Backend' },
+            ];
+        }
+        // --- END SIMULATION ---
 
-const mockSaveProduct = async (product) => {
-    await new Promise(resolve => setTimeout(resolve, 500));
-    if (product.id && product.id.startsWith('mongo-')) {
-        // Update
-        const index = mockProducts.findIndex(p => p.id === product.id);
-        if (index !== -1) mockProducts[index] = product;
-    } else {
-        // Create
-        const newProduct = { ...product, id: 'mongo-' + currentProductId++ };
-        mockProducts.push(newProduct);
-        return newProduct;
+        const data = await response.json();
+        return data; // Actual data from backend
+    } catch (error) {
+        console.error("Error connecting to backend API:", error);
+        // Fallback to local mock data if the network request fails completely
+        return [
+            { id: 'fail-1', name: 'Network Error', category: 'Error', price: 0, image: 'https://placehold.co/100/ff0000/ffffff?text=ERROR', description: 'Cannot connect to backend. Check URL/Server.' },
+        ];
     }
 };
 
+const mockSaveProduct = async (product) => {
+    const method = product.id && product.id.startsWith('mongo-') ? 'PUT' : 'POST';
+    const url = method === 'PUT' ? `${API_PRODUCTS_ENDPOINT}/${product.id}` : API_PRODUCTS_ENDPOINT;
+
+    // Simulates POST /api/products (Create) or PUT /api/products/:id (Update)
+    const response = await fetch(url, {
+        method: method,
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer mock-admin-token`, 
+        },
+        body: JSON.stringify(product)
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to ${method === 'POST' ? 'create' : 'update'} product. Status: ${response.status}`);
+    }
+    return response.json();
+};
+
 const mockDeleteProduct = async (id) => {
-    await new Promise(resolve => setTimeout(resolve, 500));
-    const index = mockProducts.findIndex(p => p.id === id);
-    if (index !== -1) mockProducts.splice(index, 1);
+    // Simulates DELETE /api/products/:id
+    const response = await fetch(`${API_PRODUCTS_ENDPOINT}/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer mock-admin-token`, 
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error(`Failed to delete product. Status: ${response.status}`);
+    }
 };
 
 
@@ -45,7 +88,7 @@ const AdminProducts = () => {
     const [editingProduct, setEditingProduct] = useState(null);
     const [newProduct, setNewProduct] = useState({ name: '', category: 'Solid Pearls', price: 0, image: '', description: '' });
     
-    // Function to reload data (replaces Firestore's onSnapshot)
+    // Function to reload data (now uses mockFetchProducts which hits the backend URL)
     const loadProducts = async () => {
         setLoading(true);
         try {
@@ -65,9 +108,7 @@ const AdminProducts = () => {
         }
         loadProducts();
 
-        // Simulate real-time updates by periodically reloading (for demo purposes)
-        const interval = setInterval(loadProducts, 5000); 
-        return () => clearInterval(interval);
+        // The automatic 5-second polling interval (setInterval) was intentionally removed in the previous step.
 
     }, [isAdmin]);
 
@@ -116,6 +157,9 @@ const AdminProducts = () => {
                         <Plus className="h-5 w-5 mr-2" /> Add New Product
                     </button>
                 </div>
+                <p className="text-sm text-gray-600 mb-6 flex items-center">
+                    <ArrowRight className="h-4 w-4 mr-2" /> API Endpoint: <code className="bg-gray-200 p-1 rounded text-xs">{API_PRODUCTS_ENDPOINT}</code>
+                </p>
 
                 {/* Add New Product Form */}
                 {isAdding && (
@@ -176,7 +220,7 @@ const AdminProducts = () => {
                             ))}
                             {productsData.length === 0 && !loading && (
                                 <tr>
-                                    <td colSpan="4" className="text-center py-10 text-gray-500">No products found. Add your first pigment!</td>
+                                    <td colSpan="4" className="text-center py-10 text-gray-500">No products found. Please ensure your backend server is running at {BACKEND_URL}.</td>
                                 </tr>
                             )}
                         </tbody>

@@ -1,11 +1,23 @@
 // File: Frontend/src/pages/AdminDashboard.jsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { ShoppingCart, DollarSign, Users, TrendingUp, TrendingDown, Package } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-// Mock Data for Charts (Simulated MongoDB/API Response)
-const salesHistory = [20, 35, 45, 60, 50, 75, 80, 95, 110, 100, 120, 140]; // Sales in Lakhs (₹)
+// --- Backend URL Configuration ---
+const BACKEND_URL = "http://localhost:5000/api"; 
+const API_DASHBOARD_ENDPOINT = `${BACKEND_URL}/dashboard/kpis`;
+const API_HISTORY_ENDPOINT = `${BACKEND_URL}/dashboard/history`;
+
+// --- Mock Data Structure for API Response ---
+const defaultKpis = [
+    { icon: DollarSign, title: "Total Revenue (YTD)", value: "Loading...", trend: 0, color: "text-gray-500" },
+    { icon: ShoppingCart, title: "Orders Processed", value: "Loading...", trend: 0, color: "text-gray-500" },
+    { icon: Users, title: "New Customers", value: "Loading...", trend: 0, color: "text-gray-500" },
+    { icon: Package, title: "Inventory Value", value: "Loading...", trend: 0, color: "text-gray-500" },
+];
+const defaultHistory = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
 
 const SalesChart = ({ data }) => {
     const maxVal = Math.max(...data);
@@ -38,26 +50,80 @@ const SalesChart = ({ data }) => {
 
 const AdminDashboard = () => {
     const { isAdmin } = useAuth();
-    
-    // Mock KPIs (Key Performance Indicators - Simulated API Response)
-    const kpis = [
-        { icon: DollarSign, title: "Total Revenue (YTD)", value: "₹1.2 Cr", trend: 15, color: "text-emerald-500" },
-        { icon: ShoppingCart, title: "Orders Processed", value: "850", trend: 8, color: "text-sky-500" },
-        { icon: Users, title: "New Customers", value: "120", trend: -5, color: "text-red-500" },
-        { icon: Package, title: "Inventory Value", value: "₹45 Lakh", trend: 0, color: "text-black" },
-    ];
+    const [kpis, setKpis] = useState(defaultKpis);
+    const [salesHistory, setSalesHistory] = useState(defaultHistory);
+    const [loading, setLoading] = useState(true);
+
+    const fetchDashboardData = async () => {
+        setLoading(true);
+        try {
+            // 1. Fetch KPIs
+            const kpiResponse = await fetch(API_DASHBOARD_ENDPOINT);
+            const kpiData = await kpiResponse.json();
+
+            // 2. Fetch Sales History (for Chart)
+            const historyResponse = await fetch(API_HISTORY_ENDPOINT);
+            const historyData = await historyResponse.json();
+
+            // --- SIMULATION LOGIC ---
+            if (!kpiResponse.ok || !historyResponse.ok) {
+                 console.warn("Backend API not reachable. Using mock default data.");
+                 // Fallback Mock Data if API fails
+                 setKpis([
+                    { icon: DollarSign, title: "Total Revenue (YTD)", value: "₹1.2 Cr", trend: 15, color: "text-emerald-500" },
+                    { icon: ShoppingCart, title: "Orders Processed", value: "850", trend: 8, color: "text-sky-500" },
+                    { icon: Users, title: "New Customers", value: "120", trend: -5, color: "text-red-500" },
+                    { icon: Package, title: "Inventory Value", value: "₹45 Lakh", trend: 0, color: "text-black" },
+                 ]);
+                 setSalesHistory([20, 35, 45, 60, 50, 75, 80, 95, 110, 100, 120, 140]);
+                 return;
+            }
+            // --- END SIMULATION LOGIC ---
+
+            // Use real fetched data (Assuming the backend returns data in the expected structure)
+            setKpis(kpiData.kpis.map(kpi => ({ 
+                ...kpi, 
+                icon: kpis[kpi.id]?.icon || DollarSign, // Preserve Lucide icons
+                color: kpis[kpi.id]?.color || 'text-black' 
+            })));
+            setSalesHistory(historyData.history);
+
+        } catch (error) {
+            console.error("Critical error during dashboard data fetch:", error);
+            // Default to mock data on error
+            setKpis(defaultKpis); 
+            setSalesHistory(defaultHistory);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (isAdmin) {
+            fetchDashboardData();
+        } else if (!isAdmin) {
+            setLoading(false);
+        }
+    }, [isAdmin]);
+
 
     if (!isAdmin) return <div className="text-center py-20 text-red-500 font-bold">Access Denied: Admin required.</div>;
+    if (loading) return <div className="text-center py-20 text-black">Loading Dashboard Data...</div>;
+
 
     return (
         <div className="bg-gray-100 min-h-[calc(100vh-80px)] py-12">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <h1 className="text-4xl font-black text-black italic uppercase mb-10">Admin Dashboard</h1>
                 
+                 <p className="text-sm text-gray-600 mb-6 flex items-center">
+                    Data Fetched From: <code className="bg-gray-200 p-1 rounded text-xs ml-2">{BACKEND_URL}</code>
+                </p>
+
                 {/* KPI Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
                     {kpis.map((kpi, index) => (
-                        <div key={index} className="bg-white p-6 rounded-lg shadow-xl border border-gray-200">
+                        <div key={kpi.title || index} className="bg-white p-6 rounded-lg shadow-xl border border-gray-200">
                             <div className="flex items-center justify-between mb-4">
                                 <kpi.icon className={`h-8 w-8 ${kpi.color}`} />
                                 <span className={`text-sm font-bold flex items-center ${kpi.trend > 0 ? 'text-emerald-500' : kpi.trend < 0 ? 'text-red-500' : 'text-gray-500'}`}>
