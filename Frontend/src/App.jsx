@@ -15,7 +15,7 @@ import Services from './pages/Services.jsx';
 import AdminLogin from './pages/AdminLogin.jsx'; 
 import AdminDashboard from './Context/AdminDashboard.jsx';
 import AdminProducts from './pages/AdminProducts.jsx'; 
-import { AuthProvider } from './context/AuthContext.jsx'; // Context Provider Import
+import { AuthProvider } from './Context/AuthContext.jsx'; // Context Provider Import
 
 // Main component containing cart logic and routing
 const MainApp = () => {
