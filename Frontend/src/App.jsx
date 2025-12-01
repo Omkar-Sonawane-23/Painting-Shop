@@ -1,20 +1,25 @@
 // File: Frontend/src/App.jsx
 import React, { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar.jsx'; // Added .jsx
-import Footer from './components/Footer.jsx'; // Added .jsx
-import CartSidebar from './components/CartSidebar.jsx'; // Added .jsx
-import Home from './pages/Home.jsx'; // Added .jsx
-import Shop from './pages/Shop.jsx'; // Added .jsx
-import ProductPage from './pages/ProductPage.jsx'; // Added .jsx
-import Contact from './pages/Contact.jsx'; // Added .jsx
-import Cart from './pages/Cart.jsx'; // Added .jsx
-import Checkout from './pages/Checkout.jsx'; // Added .jsx
-import About from './pages/About.jsx'; // Added .jsx
-import Services from './pages/Services.jsx'; // Added .jsx
+import Navbar from './components/Navbar.jsx'; 
+import Footer from './components/Footer.jsx'; 
+import CartSidebar from './components/CartSidebar.jsx'; 
+import Home from './pages/Home.jsx'; 
+import Shop from './pages/Shop.jsx'; 
+import ProductPage from './pages/ProductPage.jsx'; 
+import Contact from './pages/Contact.jsx'; 
+import Cart from './pages/Cart.jsx'; 
+import Checkout from './pages/Checkout.jsx'; 
+import About from './pages/About.jsx'; 
+import Services from './pages/Services.jsx'; 
+import AdminLogin from './pages/AdminLogin.jsx'; 
+import AdminDashboard from './Context/AdminDashboard.jsx';
+import AdminProducts from './pages/AdminProducts.jsx'; 
+import { AuthProvider } from './context/AuthContext.jsx'; // Context Provider Import
 
-const App = () => {
-  // cartItems now stores objects like: { ...product, quantity: N }
+// Main component containing cart logic and routing
+const MainApp = () => {
+  // cartItems stores objects like: { id: 'solid-1', name: '24 Karat Gold', price: 1599, quantity: 2 }
   const [cartItems, setCartItems] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
 
@@ -75,20 +80,25 @@ const App = () => {
         onClose={() => setIsCartOpen(false)} 
         cartItems={cartItems} 
         onRemoveItem={removeFromCart} 
-        onUpdateQuantity={updateQuantity} // Pass the new function
+        onUpdateQuantity={updateQuantity} 
       />
 
-      <main className="flex-grow pt-20"> {/* Added padding top for sticky navbar */}
+      <main className="flex-grow pt-20"> 
         <Routes>
+          {/* Public Routes */}
           <Route path="/" element={<Home onAddToCart={addToCart} />} />
           <Route path="/shop" element={<Shop onAddToCart={addToCart} />} />
           <Route path="/product/:id" element={<ProductPage onAddToCart={addToCart} />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/cart" element={<Cart cartItems={cartItems} onRemoveItem={removeFromCart} onUpdateQuantity={updateQuantity} />} />
           <Route path="/checkout" element={<Checkout cartItems={cartItems} clearCart={clearCart} />} />
-          
           <Route path="/about" element={<About />} /> 
           <Route path="/services" element={<Services />} /> 
+          
+          {/* Admin Routes */}
+          <Route path="/admin" element={<AdminLogin />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/products" element={<AdminProducts />} />
 
         </Routes>
       </main>
@@ -98,4 +108,11 @@ const App = () => {
   );
 };
 
-export default App;
+// Main Export Wrapper for AuthProvider
+export default function App() {
+  return (
+    <AuthProvider>
+      <MainApp />
+    </AuthProvider>
+  );
+}
