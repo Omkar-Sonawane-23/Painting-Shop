@@ -5,7 +5,7 @@ import { ShoppingCart, DollarSign, Users, TrendingUp, TrendingDown, Package } fr
 import { Link } from 'react-router-dom';
 
 // --- Backend URL Configuration ---
-const BACKEND_URL = "http://localhost:5000/api"; 
+const BACKEND_URL = "http://localhost:4000/api"; 
 const API_DASHBOARD_ENDPOINT = `${BACKEND_URL}/dashboard/kpis`;
 const API_HISTORY_ENDPOINT = `${BACKEND_URL}/dashboard/history`;
 
