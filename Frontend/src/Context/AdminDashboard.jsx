@@ -1,11 +1,11 @@
 // File: Frontend/src/pages/AdminDashboard.jsx
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../Context/AuthContext.jsx';
+import { API_URL as BACKEND_URL } from '../config';
 import { ShoppingCart, DollarSign, Users, TrendingUp, TrendingDown, Package } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 // --- Backend URL Configuration ---
-const BACKEND_URL = "http://localhost:4000/api"; 
 const API_DASHBOARD_ENDPOINT = `${BACKEND_URL}/dashboard/kpis`;
 const API_HISTORY_ENDPOINT = `${BACKEND_URL}/dashboard/history`;
 

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const BACKEND_URL = "http://localhost:4000/api/auth";
+import { API_URL as BACKEND_URL } from '../config';
 const API_SIGNUP_ENDPOINT = `${BACKEND_URL}/signup`;
 
 export default function Signup() {

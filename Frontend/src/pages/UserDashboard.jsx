@@ -6,8 +6,8 @@ import axios from 'axios';
 import { User, Package, ShoppingCart, Calendar, Mail, LogOut, Bell, TrendingUp, MapPin, Heart, Clock, CheckCircle, Truck, XCircle, ChevronRight, Search } from "lucide-react";
 
 // --- API Endpoint Configuration ---
-const BACKEND_URL = "http://localhost:4000";
-const API_USER_ORDERS = `${BACKEND_URL}/api/user/orders`; 
+import { API_URL as BACKEND_URL } from '../config';
+const API_USER_ORDERS = `${BACKEND_URL}/user/orders`; 
 
 
 export default function UserDashboard() {

@@ -1,10 +1,10 @@
 // File: Frontend/src/Context/AdminOrders.jsx
 import React, { useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
+import { API_URL as BACKEND_URL } from '../config';
 import { Package, Loader2, AlertCircle, Eye, CheckCircle, XCircle, Truck, Clock, ArrowRight, RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-const BACKEND_URL = "http://localhost:4000/api";
 const API_ORDERS_ENDPOINT = `${BACKEND_URL}/admin/orders`;
 
 // Status badge component

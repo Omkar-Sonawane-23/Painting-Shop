@@ -1,13 +1,9 @@
 // File: Frontend/src/pages/AdminProducts.jsx
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../Context/AuthContext'; // FIX: Removed .jsx extension
+import { API_URL as BACKEND_URL } from '../config';
 import { Plus, Trash2, Edit, Save, X, ArrowRight } from 'lucide-react';
 
-// --- Backend URL Configuration ---
-// IMPORTANT: In a real Vite app, you would use import.meta.env.VITE_BACKEND_URL.
-// For this self-contained file, we define a placeholder constant.
-// Replace this with your actual Node/MongoDB server URL.
-const BACKEND_URL = "http://localhost:4000/api"; 
 const API_PRODUCTS_ENDPOINT = `${BACKEND_URL}/products`;
 
 // --- Mock Product API Calls (Updated to use fetch and external URL) ---

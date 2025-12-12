@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { CheckCircle, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const BACKEND_URL = "http://localhost:4000/api";
+import { API_URL as BACKEND_URL } from '../config';
 const API_ORDER_ENDPOINT = `${BACKEND_URL}/orders`;
 
 const Checkout = ({ cartItems, clearCart }) => {

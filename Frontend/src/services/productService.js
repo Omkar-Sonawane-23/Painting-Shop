@@ -1,5 +1,5 @@
 // Product API Service
-const BACKEND_URL = "http://localhost:4000/api";
+import { API_URL as BACKEND_URL } from '../config';
 const API_PRODUCTS_ENDPOINT = `${BACKEND_URL}/products`;
 
 /**

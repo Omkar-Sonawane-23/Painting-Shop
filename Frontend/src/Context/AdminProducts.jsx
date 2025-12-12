@@ -1,10 +1,10 @@
 // File: Frontend/src/Context/AdminProducts.jsx
 import React, { useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
+import { API_URL as BACKEND_URL } from '../config';
 import { Plus, Trash2, Edit, Save, X, ArrowRight, AlertCircle, CheckCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-const BACKEND_URL = "http://localhost:4000/api";
 const API_PRODUCTS_ENDPOINT = `${BACKEND_URL}/products`;
 
 // API Functions

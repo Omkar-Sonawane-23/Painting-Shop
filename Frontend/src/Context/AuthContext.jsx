@@ -1,6 +1,7 @@
 // File: Frontend/src/context/AuthContext.jsx (UPDATE)
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { API_URL as BACKEND_URL } from '../config';
 
 const AuthContext = createContext();
 
@@ -52,10 +53,10 @@ export const AuthProvider = ({ children }) => {
   // and context variables to track status.
 
   const adminLogout = async () => { // Renamed from your mock function
-    try {
-      // We assume your /api/auth/logout handles cookie clearance
-      await fetch("http://localhost:4000/api/auth/logout", { method: "POST", credentials: "include" });
-    } catch (error) {
+		try {
+			// We assume your /api/auth/logout handles cookie clearance
+			await fetch(`${BACKEND_URL}/auth/logout`, { method: "POST", credentials: "include" });
+		} catch (error) {
       console.warn("Logout request failed (network error or server down), proceeding with client-side clear.", error);
     }
     clearAuthData();

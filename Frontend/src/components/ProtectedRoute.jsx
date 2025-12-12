@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 // 🔑 Import AuthContext to update user state if 'me' endpoint returns it
 import { useAuth } from '../Context/AuthContext'; 
+import { API_URL as BACKEND_URL } from '../config';
 
 // 🔑 Accept 'requiredRole' as a prop
 export default function ProtectedRoute({ children, requiredRole = 'CUSTOMER' }) { 
@@ -21,8 +22,8 @@ export default function ProtectedRoute({ children, requiredRole = 'CUSTOMER' }) 
         return;
       }
 
-      try {
-        const res = await fetch("http://localhost:4000/api/auth/me", {
+	try {
+	const res = await fetch(`${BACKEND_URL}/auth/me`, {
           method: "GET",
           headers: {
             "Authorization": `Bearer ${token}`,
