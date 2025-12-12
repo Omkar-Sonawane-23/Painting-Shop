@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../Context/AuthContext"; // 🔑 Import useAuth
 
 import { API_URL as BACKEND_URL } from '../config';
-const API_LOGIN_ENDPOINT = `${BACKEND_URL}/login`;
+const API_LOGIN_ENDPOINT = `${BACKEND_URL}/auth/login`;
 
 export default function Login() {
   const navigate = useNavigate();
