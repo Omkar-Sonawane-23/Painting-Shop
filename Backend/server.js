@@ -17,12 +17,12 @@ const dashboardRoutes = require('./routes/dashboardRoutes');
 
 const app = express();
 
+app.use(cors('*'));
 app.use(helmet());
 app.use(express.json());
 app.use(cookieParser());
 
 // CORS - allow React app origin (set in env or change to your front-end origin)
-app.use(cors('*'));
 
 // rate limiter for auth endpoints
 const limiter = rateLimit({
