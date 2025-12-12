@@ -1,6 +1,6 @@
 // File: Frontend/src/pages/AdminProducts.jsx
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext'; // FIX: Removed .jsx extension
+import { useAuth } from '../Context/AuthContext'; // FIX: Removed .jsx extension
 import { Plus, Trash2, Edit, Save, X } from 'lucide-react';
 // ... rest of file (no changes needed)
 const AdminProducts = () => {
@@ -139,4 +139,5 @@ const AdminProducts = () => {
         </div>
     );
 };
+export default AdminProducts;   
 // ... rest of component code

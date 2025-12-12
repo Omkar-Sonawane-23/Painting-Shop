@@ -1,6 +1,6 @@
 // File: Frontend/src/pages/AdminDashboard.jsx
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext.jsx';
+import { useAuth } from '../Context/AuthContext.jsx';
 import { ShoppingCart, DollarSign, Users, TrendingUp, TrendingDown, Package } from 'lucide-react';
 import { Link } from 'react-router-dom';
 

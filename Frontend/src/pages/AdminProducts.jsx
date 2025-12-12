@@ -1,6 +1,6 @@
 // File: Frontend/src/pages/AdminProducts.jsx
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext'; // FIX: Removed .jsx extension
+import { useAuth } from '../Context/AuthContext'; // FIX: Removed .jsx extension
 import { Plus, Trash2, Edit, Save, X, ArrowRight } from 'lucide-react';
 
 // --- Backend URL Configuration ---

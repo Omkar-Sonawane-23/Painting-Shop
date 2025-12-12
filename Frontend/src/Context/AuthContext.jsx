@@ -1,84 +1,84 @@
-// File: Frontend/src/context/AuthContext.jsx
+// File: Frontend/src/context/AuthContext.jsx (UPDATE)
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
 
-// --- Mock API Setup (Simulates communication with a Node/Express/MongoDB Backend) ---
-
-// Simulated user data storage (replaces Firebase's token/claims system)
-let currentSessionToken = null; 
-
-const mockLoginAPI = async (code) => {
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 500)); 
-
-  // Hardcoded secret code check (This would normally happen on the server)
-  const SECRET_ADMIN_CODE = 'xtreme2025';
-
-  if (code === SECRET_ADMIN_CODE) {
-    // Simulate successful MongoDB authentication and return a token
-    const token = 'mock-mongodb-admin-token-' + Math.random().toString(36).substring(2, 9);
-    currentSessionToken = token;
-    return { token, isAdmin: true, username: 'admin' };
-  } else {
-    throw new Error('Invalid access code.');
-  }
-};
-
-const mockLogoutAPI = async () => {
-  // Simulate clearing the session token on the server
-  await new Promise(resolve => setTimeout(resolve, 100));
-  currentSessionToken = null;
-  return { success: true };
-};
-
 // --- Auth Provider Component ---
 
 export const AuthProvider = ({ children }) => {
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [loading, setLoading] = useState(true);
+  // User state derived from local storage/token if available
+  const [user, setUser] = useState(null);
+  const [accessToken, setAccessToken] = useState(localStorage.getItem('accessToken') || null);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // Check if a session token exists (simulated persistence)
-    if (currentSessionToken) {
-        setIsAdmin(true);
-    }
-    setLoading(false);
-  }, []);
+  // Function to parse and set user data from the "me" endpoint
+  const setAuthData = (token, userData) => {
+    localStorage.setItem('accessToken', token);
+    localStorage.setItem('user', JSON.stringify(userData));
+    setAccessToken(token);
+    setUser(userData);
+  };
 
-  const adminLogin = async (code) => {
-    try {
-      const response = await mockLoginAPI(code);
-      if (response.isAdmin) {
-        setIsAdmin(true);
-      }
-      return response;
-    } catch (error) {
-      setIsAdmin(false);
-      throw error;
-    }
-  };
-  
-  const adminLogout = async () => {
-    await mockLogoutAPI();
-    setIsAdmin(false);
-  };
-  
-  const value = {
-    isAdmin,
-    loading,
-    adminLogin,
-    adminLogout,
-    // Note: 'db' and 'auth' were removed as part of MongoDB migration
-  };
+  // Function to clear all auth data
+  const clearAuthData = () => {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('user');
+    setAccessToken(null);
+    setUser(null);
+  };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {!loading && children}
-    </AuthContext.Provider>
-  );
+  // Check initial auth status (runs once on load)
+  useEffect(() => {
+    const checkInitialAuth = async () => {
+      const storedToken = localStorage.getItem('accessToken');
+      const storedUser = JSON.parse(localStorage.getItem('user'));
+
+      if (storedToken && storedUser) {
+        // We rely on the ProtectedRoute to validate the token on page load,
+        // but we initialize the context state for immediate access.
+        setAccessToken(storedToken);
+        setUser(storedUser);
+      }
+      setLoading(false);
+    };
+
+    checkInitialAuth();
+  }, []);
+
+  // Since the login is handled on the /login page, we only need a logout function
+  // and context variables to track status.
+
+  const adminLogout = async () => { // Renamed from your mock function
+    try {
+      // We assume your /api/auth/logout handles cookie clearance
+      await fetch("http://localhost:4000/api/auth/logout", { method: "POST", credentials: "include" });
+    } catch (error) {
+      console.warn("Logout request failed (network error or server down), proceeding with client-side clear.", error);
+    }
+    clearAuthData();
+  };
+  
+  // 🔑 THE CRITICAL CHANGE: Derive isAdmin from the user object role
+  const isAdmin = user?.role === 'ADMIN';
+
+  const value = {
+    user,
+    accessToken,
+    isAdmin,
+    loading,
+    adminLogout,
+    setAuthData, // Utility function to be used by the Login page upon success
+    clearAuthData,
+  };
+
+  return (
+    <AuthContext.Provider value={value}>
+      {!loading && children}
+    </AuthContext.Provider>
+  );
 };
 
 export default AuthProvider;
