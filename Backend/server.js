@@ -22,10 +22,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 // CORS - allow React app origin (set in env or change to your front-end origin)
-app.use(cors({
-  origin: process.env.FRONTEND_ORIGIN || 'http://localhost:5173',
-  credentials: true
-}));
+app.use(cors('*'));
 
 // rate limiter for auth endpoints
 const limiter = rateLimit({
