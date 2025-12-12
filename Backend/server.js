@@ -25,12 +25,12 @@ app.use(cookieParser());
 // CORS - allow React app origin (set in env or change to your front-end origin)
 
 // rate limiter for auth endpoints
-const limiter = rateLimit({
-  windowMs: 1 * 60 * 1000,
-  max: 10,
-  message: 'Too many requests, try again later'
-});
-app.use('/api/auth', limiter);
+// const limiter = rateLimit({
+//   windowMs: 1 * 60 * 1000,
+//   max: 10,
+//   message: 'Too many requests, try again later'
+// });
+// app.use('/api/auth', limiter);
 
 // Routes
 app.use('/api/auth', authRoutes);
