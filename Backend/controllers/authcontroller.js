@@ -65,7 +65,18 @@ async function login(req, res) {
     if (!ok) return res.status(401).json({ message: 'Invalid credentials' });
 
     const accessToken = signAccessToken({ sub: user._id, role: user.role });
+    const refreshToken = signRefreshToken({ sub: user._id });
 
+    const rtHash = hashToken(refreshToken);
+    // Optionally, revoke existing tokens for this user or keep multiple allowed.
+    await RefreshToken.create({ user: user._id, tokenHash: rtHash, expiresAt: new Date(Date.now() + REFRESH_EXPIRES_MS) });
+
+    res.cookie(ACCESS_COOKIE_NAME, refreshToken, {
+      httpOnly: true,
+      secure: process.env.COOKIE_SECURE === 'true',
+      sameSite: process.env.COOKIE_SAMESITE || 'Strict',
+      maxAge: REFRESH_EXPIRES_MS
+    });
     res.json({
       user: { id: user._id, name: user.name, email: user.email, role: user.role },
       accessToken

@@ -28,8 +28,7 @@ export default function ProtectedRoute({ children, requiredRole = 'CUSTOMER' }) 
           headers: {
             "Authorization": `Bearer ${token}`,
             "Content-Type": "application/json"
-          },
-          credentials: "include",
+          }
         });
 
         if (res.ok) {
