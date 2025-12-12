@@ -1,15 +1,14 @@
 const mongoose = require('mongoose');
 
 const productSchema = new mongoose.Schema({
-  sku: { type: String, unique: true },
   name: { type: String, required: true },
   description: { type: String },
-  category: { type: String },
-  priceCents: { type: Number, default: 0 },
-  currency: { type: String, default: 'INR' },
+  category: { type: String, required: true },
+  price: { type: Number, required: true }, // Price in INR (matches frontend)
+  image: { type: String }, // Single image URL (matches frontend)
+  tag: { type: String }, // Optional tag like 'Best Seller', 'New', etc.
   stock: { type: Number, default: 0 },
-  images: { type: [String], default: [] }, // S3/URL strings
-  metadata: { type: mongoose.Schema.Types.Mixed, default: {} }
+  sku: { type: String, unique: true, sparse: true }, // Optional SKU
 }, { timestamps: true });
 
 module.exports = mongoose.model('Product', productSchema);

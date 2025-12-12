@@ -3,10 +3,26 @@ import React, { useState, useEffect } from 'react';
 import { CheckCircle, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+const BACKEND_URL = "http://localhost:4000/api";
+const API_ORDER_ENDPOINT = `${BACKEND_URL}/orders`;
+
 const Checkout = ({ cartItems, clearCart }) => {
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  const [error, setError] = useState('');
+  
+  // Form state for shipping address
+  const [shippingAddress, setShippingAddress] = useState({
+    fullName: '',
+    phone: '',
+    email: '',
+    addressLine1: '',
+    city: '',
+    state: '',
+    zipCode: '',
+    country: 'India'
+  });
 
   // Simulated fixed shipping rate
   const shipping = cartItems.length > 0 ? 250 : 0; 
@@ -20,16 +36,59 @@ const Checkout = ({ cartItems, clearCart }) => {
     }
   }, [cartItems, navigate, isComplete]);
 
-  const handlePlaceOrder = () => {
+  const handleAddressChange = (e) => {
+    const { name, value } = e.target;
+    setShippingAddress(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handlePlaceOrder = async () => {
     if (cartItems.length === 0) return;
+    
+    // Validate shipping address
+    if (!shippingAddress.fullName || !shippingAddress.phone || !shippingAddress.email || 
+        !shippingAddress.addressLine1 || !shippingAddress.city || !shippingAddress.state || !shippingAddress.zipCode) {
+      setError('Please fill in all shipping address fields');
+      return;
+    }
 
     setIsProcessing(true);
-    // Simulate a payment/order processing delay
-    setTimeout(() => {
+    setError('');
+
+    try {
+      const orderData = {
+        items: cartItems.map(item => ({
+          id: item.id,
+          productId: item.id, // Will be handled by backend
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price
+        })),
+        shippingAddress,
+        paymentMethod: 'COD'
+      };
+
+      const response = await fetch(API_ORDER_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(orderData)
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to place order');
+      }
+
       setIsProcessing(false);
       setIsComplete(true);
-      clearCart(); // Clear the cart after simulated completion
-    }, 2000);
+      clearCart(); // Clear the cart after successful order
+    } catch (err) {
+      console.error('Error placing order:', err);
+      setError(err.message || 'Failed to place order. Please try again.');
+      setIsProcessing(false);
+    }
   };
 
   if (isComplete) {
@@ -64,15 +123,81 @@ const Checkout = ({ cartItems, clearCart }) => {
             {/* Shipping Address */}
             <div className="bg-gray-50 p-6 border border-gray-200 rounded-lg shadow-lg">
               <h2 className="text-xl font-black text-black uppercase mb-6 border-b pb-4 border-gray-200">1. Shipping Information</h2>
+              {error && (
+                <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                  {error}
+                </div>
+              )}
               <form className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <input type="text" placeholder="Full Name" required className="w-full bg-white border border-gray-300 rounded-sm py-3 px-4 text-black focus:ring-sky-500 focus:border-sky-500" />
-                <input type="text" placeholder="Phone Number" required className="w-full bg-white border border-gray-300 rounded-sm py-3 px-4 text-black focus:ring-sky-500 focus:border-sky-500" />
-                <input type="email" placeholder="Email Address" required className="w-full bg-white border border-gray-300 rounded-sm py-3 px-4 text-black focus:ring-sky-500 focus:border-sky-500" />
-                <input type="text" placeholder="Address Line 1" required className="w-full bg-white border border-gray-300 rounded-sm py-3 px-4 text-black focus:ring-sky-500 focus:border-sky-500 md:col-span-2" />
-                <input type="text" placeholder="City" required className="w-full bg-white border border-gray-300 rounded-sm py-3 px-4 text-black focus:ring-sky-500 focus:border-sky-500" />
-                <input type="text" placeholder="State / Province" required className="w-full bg-white border border-gray-300 rounded-sm py-3 px-4 text-black focus:ring-sky-500 focus:border-sky-500" />
-                <input type="text" placeholder="ZIP / Postal Code" required className="w-full bg-white border border-gray-300 rounded-sm py-3 px-4 text-black focus:ring-sky-500 focus:border-sky-500" />
-                <select className="w-full bg-white border border-gray-300 rounded-sm py-3 px-4 text-black focus:ring-sky-500 focus:border-sky-500">
+                <input 
+                  type="text" 
+                  name="fullName"
+                  placeholder="Full Name" 
+                  required 
+                  value={shippingAddress.fullName}
+                  onChange={handleAddressChange}
+                  className="w-full bg-white border border-gray-300 rounded-sm py-3 px-4 text-black focus:ring-sky-500 focus:border-sky-500" 
+                />
+                <input 
+                  type="text" 
+                  name="phone"
+                  placeholder="Phone Number" 
+                  required 
+                  value={shippingAddress.phone}
+                  onChange={handleAddressChange}
+                  className="w-full bg-white border border-gray-300 rounded-sm py-3 px-4 text-black focus:ring-sky-500 focus:border-sky-500" 
+                />
+                <input 
+                  type="email" 
+                  name="email"
+                  placeholder="Email Address" 
+                  required 
+                  value={shippingAddress.email}
+                  onChange={handleAddressChange}
+                  className="w-full bg-white border border-gray-300 rounded-sm py-3 px-4 text-black focus:ring-sky-500 focus:border-sky-500" 
+                />
+                <input 
+                  type="text" 
+                  name="addressLine1"
+                  placeholder="Address Line 1" 
+                  required 
+                  value={shippingAddress.addressLine1}
+                  onChange={handleAddressChange}
+                  className="w-full bg-white border border-gray-300 rounded-sm py-3 px-4 text-black focus:ring-sky-500 focus:border-sky-500 md:col-span-2" 
+                />
+                <input 
+                  type="text" 
+                  name="city"
+                  placeholder="City" 
+                  required 
+                  value={shippingAddress.city}
+                  onChange={handleAddressChange}
+                  className="w-full bg-white border border-gray-300 rounded-sm py-3 px-4 text-black focus:ring-sky-500 focus:border-sky-500" 
+                />
+                <input 
+                  type="text" 
+                  name="state"
+                  placeholder="State / Province" 
+                  required 
+                  value={shippingAddress.state}
+                  onChange={handleAddressChange}
+                  className="w-full bg-white border border-gray-300 rounded-sm py-3 px-4 text-black focus:ring-sky-500 focus:border-sky-500" 
+                />
+                <input 
+                  type="text" 
+                  name="zipCode"
+                  placeholder="ZIP / Postal Code" 
+                  required 
+                  value={shippingAddress.zipCode}
+                  onChange={handleAddressChange}
+                  className="w-full bg-white border border-gray-300 rounded-sm py-3 px-4 text-black focus:ring-sky-500 focus:border-sky-500" 
+                />
+                <select 
+                  name="country"
+                  value={shippingAddress.country}
+                  onChange={handleAddressChange}
+                  className="w-full bg-white border border-gray-300 rounded-sm py-3 px-4 text-black focus:ring-sky-500 focus:border-sky-500"
+                >
                   <option>India</option>
                   <option>Other Country</option>
                 </select>

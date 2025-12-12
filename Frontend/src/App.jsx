@@ -26,7 +26,8 @@ import UserDashboard from './pages/UserDashboard.jsx';
 
 // Admin components (from the 'src/Context' directory)
 import AdminDashboard from './Context/AdminDashboard.jsx';
-import AdminProducts from './Context/AdminProducts.jsx'; 
+import AdminProducts from './Context/AdminProducts.jsx';
+import AdminOrders from './Context/AdminOrders.jsx'; 
 
 export default function App() {
   const [cartItems, setCartItems] = useState([]);
@@ -128,16 +129,24 @@ export default function App() {
                 </ProtectedRoute>
               } 
             />
-            <Route 
-              path="/admin/products" 
-              element={
-                <ProtectedRoute requiredRole="ADMIN">
-                  <AdminProducts />
-                </ProtectedRoute>
-              } 
-            />
+            <Route 
+              path="/admin/products" 
+              element={
+                <ProtectedRoute requiredRole="ADMIN">
+                  <AdminProducts />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin/orders" 
+              element={
+                <ProtectedRoute requiredRole="ADMIN">
+                  <AdminOrders />
+                </ProtectedRoute>
+              } 
+            />
 
-          </Routes>
+          </Routes>
         </main>
 
         <Footer />

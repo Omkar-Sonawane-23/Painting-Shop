@@ -1,16 +1,33 @@
 // File: Frontend/src/pages/Home.jsx
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Droplets, Car, Zap, PaintBucket } from 'lucide-react';
+import { ArrowRight, Droplets, Car, Zap, PaintBucket, Loader2 } from 'lucide-react';
 import ProductCard from '../components/ProductCard.jsx';
-import { products } from '../data/products.js';
+import { fetchFeaturedProducts, fetchAllProducts } from '../services/productService';
 
 const Home = ({ onAddToCart }) => {
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-  const featuredProducts = products
-    .filter(p => p.tag === 'Best Seller' || p.tag === 'New')
-    .slice(0, 3);
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        const featured = await fetchFeaturedProducts();
+        setFeaturedProducts(featured);
+        
+        const allProducts = await fetchAllProducts();
+        setTotalProducts(allProducts.length);
+      } catch (error) {
+        console.error('Error loading products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProducts();
+  }, []);
 
   const allCategories = [
     { name: 'Solid Pearls', image: 'https://images.unsplash.com/photo-1503376763036-066120622c74?auto=format&fit=crop&q=80&w=600', desc: 'Single & Metallic Tones' },
@@ -213,22 +230,28 @@ const Home = ({ onAddToCart }) => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {loading ? (
+              <div className="col-span-full flex justify-center py-12">
+                <Loader2 className="h-8 w-8 animate-spin text-sky-500" />
+              </div>
+            ) : (
+              <>
+                {featuredProducts.map(prod => (
+                  <ProductCard key={prod.id || prod._id} product={prod} onAddToCart={onAddToCart} />
+                ))}
 
-            {featuredProducts.map(prod => (
-              <ProductCard key={prod.id} product={prod} onAddToCart={onAddToCart} />
-            ))}
+                <Link
+                  to="/shop"
+                  className="group flex flex-col items-center justify-center bg-black rounded-xl p-6 text-center hover:border-sky-500 border-2 border-transparent transition-all"
+                >
+                  <h3 className="text-white text-xl sm:text-2xl font-black italic mb-2 group-hover:text-sky-500">
+                    View All {totalProducts}+ Colors
+                  </h3>
 
-            <Link
-              to="/shop"
-              className="group flex flex-col items-center justify-center bg-black rounded-xl p-6 text-center hover:border-sky-500 border-2 border-transparent transition-all"
-            >
-              <h3 className="text-white text-xl sm:text-2xl font-black italic mb-2 group-hover:text-sky-500">
-                View All {products.length}+ Colors
-              </h3>
-
-              <ArrowRight className="mt-3 h-8 w-8 text-sky-500 group-hover:text-white group-hover:bg-sky-500 p-1 rounded-full transition-all" />
-            </Link>
-
+                  <ArrowRight className="mt-3 h-8 w-8 text-sky-500 group-hover:text-white group-hover:bg-sky-500 p-1 rounded-full transition-all" />
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>

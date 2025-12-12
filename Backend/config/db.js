@@ -2,11 +2,13 @@ const mongoose = require('mongoose');
 
 async function connectDB(uri) {
   mongoose.set('strictQuery', false);
-  await mongoose.connect(uri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  });
-  console.log('MongoDB connected');
+  try {
+    await mongoose.connect(uri);
+    console.log('MongoDB connected');
+  } catch (error) {
+    console.error('MongoDB connection error:', error.message);
+    throw error;
+  }
 }
 
 module.exports = { connectDB };

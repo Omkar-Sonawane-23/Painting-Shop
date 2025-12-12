@@ -49,7 +49,7 @@ const SalesChart = ({ data }) => {
 
 
 const AdminDashboard = () => {
-    const { isAdmin } = useAuth();
+    const { isAdmin, accessToken } = useAuth();
     const [kpis, setKpis] = useState(defaultKpis);
     const [salesHistory, setSalesHistory] = useState(defaultHistory);
     const [loading, setLoading] = useState(true);
@@ -57,12 +57,17 @@ const AdminDashboard = () => {
     const fetchDashboardData = async () => {
         setLoading(true);
         try {
+            const headers = {};
+            if (accessToken) {
+                headers['Authorization'] = `Bearer ${accessToken}`;
+            }
+            
             // 1. Fetch KPIs
-            const kpiResponse = await fetch(API_DASHBOARD_ENDPOINT);
+            const kpiResponse = await fetch(API_DASHBOARD_ENDPOINT, { headers });
             const kpiData = await kpiResponse.json();
 
             // 2. Fetch Sales History (for Chart)
-            const historyResponse = await fetch(API_HISTORY_ENDPOINT);
+            const historyResponse = await fetch(API_HISTORY_ENDPOINT, { headers });
             const historyData = await historyResponse.json();
 
             // --- SIMULATION LOGIC ---
@@ -161,11 +166,13 @@ const AdminDashboard = () => {
                 {/* Quick Navigation Panel */}
                 <div className="mt-12">
                     <h3 className="text-2xl font-black italic mb-6">Quick Navigation</h3>
-                    <div className="flex space-x-4">
-                        <Link to="/admin/products" className="bg-black text-white py-3 px-6 rounded-lg font-bold uppercase tracking-widest hover:bg-red-600 transition-colors shadow-lg">
+                    <div className="flex flex-wrap gap-4">
+                        <Link to="/admin/products" className="bg-black text-white py-3 px-6 rounded-lg font-bold uppercase tracking-widest hover:bg-sky-600 transition-colors shadow-lg">
                             Product Management
                         </Link>
-                        {/* More links would go here (e.g., /admin/orders) */}
+                        <Link to="/admin/orders" className="bg-sky-500 text-white py-3 px-6 rounded-lg font-bold uppercase tracking-widest hover:bg-sky-600 transition-colors shadow-lg">
+                            Order Management
+                        </Link>
                     </div>
                 </div>
 

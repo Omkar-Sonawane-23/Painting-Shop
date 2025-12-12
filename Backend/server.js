@@ -10,7 +10,10 @@ const { connectDB } = require('./config/db');
 
 const authRoutes = require('./routes/authroutes');
 const userRoutes = require('./routes/userroutes');
-const adminRoutes = require('./routes/adminRoutes'); // 🔑 NEW: Import admin routes
+const adminRoutes = require('./routes/adminRoutes');
+const productRoutes = require('./routes/productRoutes');
+const orderRoutes = require('./routes/orderRoutes');
+const dashboardRoutes = require('./routes/dashboardRoutes');
 
 const app = express();
 
@@ -20,40 +23,43 @@ app.use(cookieParser());
 
 // CORS - allow React app origin (set in env or change to your front-end origin)
 app.use(cors({
-  origin: process.env.FRONTEND_ORIGIN || 'http://localhost:5173',
-  credentials: true
+  origin: process.env.FRONTEND_ORIGIN || 'http://localhost:5173',
+  credentials: true
 }));
 
 // rate limiter for auth endpoints
 const limiter = rateLimit({
-  windowMs: 1 * 60 * 1000,
-  max: 10,
-  message: 'Too many requests, try again later'
+  windowMs: 1 * 60 * 1000,
+  max: 10,
+  message: 'Too many requests, try again later'
 });
 app.use('/api/auth', limiter);
 
-// routes
+// Routes
 app.use('/api/auth', authRoutes);
-
-// ⚠️ IMPORTANT: Mounting the admin routes under /api/admin
-app.use('/api/admin', adminRoutes); 
-
-// Note on userRoutes: I have removed the line:
-// app.use('/api/admin/users', userRoutes); 
-// as it conflicts with the new /api/admin/users route defined in adminRoutes.js.
-// If your existing userRoutes are for regular customer profile management, 
-// they should be mounted separately, likely under /api/users. 
-// Example (Assuming existing customer userRoutes are for /api/users):
-// app.use('/api/users', userRoutes); 
+app.use('/api/users', userRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/dashboard', dashboardRoutes); 
 
 // health
 app.get('/health', (req, res) => res.json({ ok: true }));
 
 const PORT = process.env.PORT || 4000;
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/painting-shop';
 
 // Connect to DB and start server
-connectDB(process.env.MONGO_URI).then(() => {
-  app.listen(PORT, () => console.log(`Server listening on ${PORT}`));
+connectDB(MONGO_URI).then(() => {
+  app.listen(PORT, () => {
+    console.log(`✅ Server listening on port ${PORT}`);
+    console.log(`📦 MongoDB connected`);
+  });
 }).catch(err => {
-  console.error('Failed to connect to DB', err);
+  console.error('❌ Failed to connect to DB:', err.message);
+  console.log('💡 Make sure MongoDB is running or update MONGO_URI in .env file');
+  // Still start the server - orders can be created but won't persist without DB
+  app.listen(PORT, () => {
+    console.log(`⚠️  Server listening on port ${PORT} (without database)`);
+  });
 });

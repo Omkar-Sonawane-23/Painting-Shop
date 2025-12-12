@@ -7,20 +7,20 @@ import { Plus, Trash2, Edit, Save, X, ArrowRight } from 'lucide-react';
 // IMPORTANT: In a real Vite app, you would use import.meta.env.VITE_BACKEND_URL.
 // For this self-contained file, we define a placeholder constant.
 // Replace this with your actual Node/MongoDB server URL.
-const BACKEND_URL = "http://localhost:5000/api"; 
+const BACKEND_URL = "http://localhost:4000/api"; 
 const API_PRODUCTS_ENDPOINT = `${BACKEND_URL}/products`;
 
 // --- Mock Product API Calls (Updated to use fetch and external URL) ---
 // ... (rest of mock API functions remain the same)
 
-const mockFetchProducts = async () => {
+const mockFetchProducts = async (token) => {
     try {
         // Simulates GET /api/products
-        const response = await fetch(API_PRODUCTS_ENDPOINT, {
-            headers: {
-                'Authorization': `Bearer mock-admin-token`, // Include token if necessary
-            },
-        });
+        const headers = {};
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+        const response = await fetch(API_PRODUCTS_ENDPOINT, { headers });
         
         // --- SIMULATION ONLY ---
         // In a live environment, if fetch fails, this mock data ensures the UI works
@@ -45,17 +45,20 @@ const mockFetchProducts = async () => {
     }
 };
 
-const mockSaveProduct = async (product) => {
-    const method = product.id && product.id.startsWith('mongo-') ? 'PUT' : 'POST';
-    const url = method === 'PUT' ? `${API_PRODUCTS_ENDPOINT}/${product.id}` : API_PRODUCTS_ENDPOINT;
+const mockSaveProduct = async (product, token) => {
+    const method = product._id ? 'PUT' : 'POST';
+    const url = method === 'PUT' ? `${API_PRODUCTS_ENDPOINT}/${product._id}` : API_PRODUCTS_ENDPOINT;
 
     // Simulates POST /api/products (Create) or PUT /api/products/:id (Update)
+    const headers = {
+        'Content-Type': 'application/json',
+    };
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
     const response = await fetch(url, {
         method: method,
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer mock-admin-token`, 
-        },
+        headers,
         body: JSON.stringify(product)
     });
 
@@ -65,13 +68,15 @@ const mockSaveProduct = async (product) => {
     return response.json();
 };
 
-const mockDeleteProduct = async (id) => {
+const mockDeleteProduct = async (id, token) => {
     // Simulates DELETE /api/products/:id
+    const headers = {};
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
     const response = await fetch(`${API_PRODUCTS_ENDPOINT}/${id}`, {
         method: 'DELETE',
-        headers: {
-            'Authorization': `Bearer mock-admin-token`, 
-        },
+        headers,
     });
 
     if (!response.ok) {
@@ -92,7 +97,7 @@ const AdminProducts = () => {
     const loadProducts = async () => {
         setLoading(true);
         try {
-            const data = await mockFetchProducts();
+            const data = await mockFetchProducts(accessToken);
             setProductsData(data);
         } catch (error) {
             console.error("Error fetching products:", error);
@@ -120,7 +125,7 @@ const AdminProducts = () => {
 
     const handleSave = async (productToSave) => {
         try {
-            await mockSaveProduct(productToSave);
+            await mockSaveProduct(productToSave, accessToken);
             setEditingProduct(null);
             setIsAdding(false);
             setNewProduct({ name: '', category: 'Solid Pearls', price: 0, image: '', description: '' });
@@ -133,7 +138,7 @@ const AdminProducts = () => {
     const handleDelete = async (id) => {
         if (!window.confirm(`Are you sure you want to delete product ID: ${id}?`)) return;
         try {
-            await mockDeleteProduct(id);
+            await mockDeleteProduct(id, accessToken);
             loadProducts(); // Reload data after delete
         } catch (error) {
             console.error("Error deleting product:", error);
@@ -186,8 +191,8 @@ const AdminProducts = () => {
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
                             {productsData.map(product => (
-                                <tr key={product.id}>
-                                    {editingProduct && editingProduct.id === product.id ? (
+                                <tr key={product._id || product.id}>
+                                    {editingProduct && (editingProduct._id === (product._id || product.id) || editingProduct.id === (product._id || product.id)) ? (
                                         <ProductEditRow 
                                             product={editingProduct} 
                                             categories={categories}
@@ -202,13 +207,13 @@ const AdminProducts = () => {
                                             <td className="px-6 py-4 whitespace-nowrap text-sm font-mono font-bold text-black">₹{product.price}</td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex space-x-3">
                                                 <button 
-                                                    onClick={() => setEditingProduct(product)}
+                                                    onClick={() => setEditingProduct({ ...product, id: product._id || product.id })}
                                                     className="text-sky-600 hover:text-sky-800 transition-colors p-1"
                                                 >
                                                     <Edit className="h-5 w-5" />
                                                 </button>
                                                 <button 
-                                                    onClick={() => handleDelete(product.id)}
+                                                    onClick={() => handleDelete(product._id || product.id)}
                                                     className="text-red-600 hover:text-red-800 transition-colors p-1"
                                                 >
                                                     <Trash2 className="h-5 w-5" />
@@ -282,10 +287,10 @@ const ProductEditRow = ({ product, categories, onSave, onCancel, onEditChange })
                     {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
                 </select>
                 <input name="price" type="number" value={product.price} onChange={handleChange} className="col-span-1 px-2 py-1 border rounded text-black" />
-                <input name="image" value={product.image} onChange={handleChange} placeholder="Image URL" className="col-span-1 px-2 py-1 border rounded text-black" />
+                <input name="image" value={product.image || ''} onChange={handleChange} placeholder="Image URL" className="col-span-1 px-2 py-1 border rounded text-black" />
                 <div className="col-span-1 flex space-x-2">
                     <button 
-                        onClick={() => onSave(product)} 
+                        onClick={() => onSave({ ...product, _id: product._id || product.id })} 
                         className="bg-emerald-500 text-white p-1 rounded hover:bg-emerald-600"
                     >
                         <Save className="h-5 w-5" />

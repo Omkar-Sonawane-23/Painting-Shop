@@ -4,9 +4,12 @@ import { Link } from 'react-router-dom';
 import { ShoppingCart } from 'lucide-react';
 
 const ProductCard = ({ product, onAddToCart }) => {
+  // Normalize product ID (handle both MongoDB _id and regular id)
+  const productId = product._id || product.id;
+  
   return (
     <div className="group bg-white rounded-lg overflow-hidden border border-gray-200 hover:border-sky-500 shadow-md hover:shadow-xl transition-all duration-300">
-      <Link to={`/product/${product.id}`} className="block relative overflow-hidden">
+      <Link to={`/product/${productId}`} className="block relative overflow-hidden">
         {product.tag && (
           <span className="absolute top-2 left-2 bg-black text-sky-500 text-[10px] font-black px-2 py-1 uppercase tracking-wider z-10 rounded-full">
             {product.tag}

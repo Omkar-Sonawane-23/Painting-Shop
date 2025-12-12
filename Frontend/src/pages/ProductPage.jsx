@@ -1,23 +1,70 @@
 // File: Frontend/src/pages/ProductPage.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ShoppingCart, Truck, ShieldCheck, Droplets, Plus, Minus, Microscope, Palette, ChevronRight, ArrowRight } from 'lucide-react'; 
-import { products } from '../data/products'; // Removed .js extension
-import ProductCard from '../components/ProductCard'; // Removed .jsx extension
+import { ShoppingCart, Truck, ShieldCheck, Droplets, Plus, Minus, Microscope, Palette, ChevronRight, ArrowRight, Loader2 } from 'lucide-react'; 
+import ProductCard from '../components/ProductCard';
+import { fetchProductById, fetchAllProducts } from '../services/productService';
 
 const ProductPage = ({ onAddToCart }) => {
   const { id } = useParams();
-  const [quantity, setQuantity] = useState(1); 
+  const [quantity, setQuantity] = useState(1);
+  const [product, setProduct] = useState(null);
+  const [recommendedProducts, setRecommendedProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   
-  // 1. Find the current product
-  const product = products.find(p => p.id === id);
+  // Fetch product and related products
+  useEffect(() => {
+    const loadProduct = async () => {
+      setLoading(true);
+      setError('');
+      try {
+        // Fetch the current product
+        const productData = await fetchProductById(id);
+        setProduct(productData);
+        
+        // Fetch all products to get related ones
+        const allProducts = await fetchAllProducts();
+        const related = allProducts
+          .filter(p => p.category === productData.category && (p._id !== productData._id && p.id !== productData.id))
+          .slice(0, 4);
+        setRecommendedProducts(related);
+      } catch (err) {
+        console.error('Error loading product:', err);
+        setError(err.message || 'Product not found');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  if (!product) return <div className="text-black text-center py-20">Product not found</div>;
+    if (id) {
+      loadProduct();
+    }
+  }, [id]);
 
-  // 2. Filter related products (same category, excluding current product)
-  const recommendedProducts = products
-    .filter(p => p.category === product.category && p.id !== product.id)
-    .slice(0, 4); // Limit to 4 recommended items
+  if (loading) {
+    return (
+      <div className="bg-white min-h-screen flex items-center justify-center py-20">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin text-sky-500 mx-auto mb-4" />
+          <p className="text-gray-600">Loading product...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !product) {
+    return (
+      <div className="bg-white min-h-screen flex items-center justify-center py-20">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">{error || 'Product not found'}</p>
+          <Link to="/shop" className="text-sky-500 hover:text-sky-600 font-bold">
+            ← Back to Shop
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   const handleAddToCart = () => {
     onAddToCart(product, quantity);
@@ -166,7 +213,7 @@ const ProductPage = ({ onAddToCart }) => {
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {recommendedProducts.map(recProduct => (
-                <ProductCard key={recProduct.id} product={recProduct} onAddToCart={onAddToCart} />
+                <ProductCard key={recProduct.id || recProduct._id} product={recProduct} onAddToCart={onAddToCart} />
               ))}
             </div>
             

@@ -1,16 +1,38 @@
 // File: Frontend/src/pages/Shop.jsx
 import React, { useState, useEffect } from 'react';
-import { Filter, ChevronDown } from 'lucide-react';
+import { Filter, ChevronDown, Loader2 } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
-import { products } from '../data/products';
+import { fetchAllProducts } from '../services/productService';
 
 const Shop = ({ onAddToCart }) => {
   const location = useLocation();
   const initialCategory = location.state?.category || 'All';
 
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [activeCategory, setActiveCategory] = useState(initialCategory);
   const [sortMethod, setSortMethod] = useState('Featured');
+
+  // Fetch products from API
+  useEffect(() => {
+    const loadProducts = async () => {
+      setLoading(true);
+      setError('');
+      try {
+        const data = await fetchAllProducts();
+        setProducts(data);
+      } catch (err) {
+        console.error('Error loading products:', err);
+        setError('Failed to load products. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProducts();
+  }, []);
 
   useEffect(() => {
     if (location.state?.category) {
@@ -37,6 +59,33 @@ const Shop = ({ onAddToCart }) => {
     filteredProducts.sort((a, b) => a.price - b.price);
   } else if (sortMethod === 'PriceHigh') {
     filteredProducts.sort((a, b) => b.price - a.price);
+  }
+
+  if (loading) {
+    return (
+      <div className="bg-white min-h-screen flex items-center justify-center py-20">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin text-sky-500 mx-auto mb-4" />
+          <p className="text-gray-600">Loading products...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-white min-h-screen flex items-center justify-center py-20">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-sky-500 text-white px-6 py-2 rounded-lg hover:bg-sky-600"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
