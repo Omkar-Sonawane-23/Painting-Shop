@@ -33,107 +33,125 @@ const OrderDetailsModal = ({ order, isOpen, onClose }) => {
   if (!isOpen || !order) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto">
-      <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-        <div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onClick={onClose}></div>
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-4">
 
-        <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">
-          <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-2xl font-black italic uppercase">Order Details</h3>
-              <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
-                <XCircle className="h-6 w-6" />
-              </button>
-            </div>
+    <div className="bg-[#121821] text-white rounded-2xl w-full max-w-4xl border border-sky-500 shadow-2xl overflow-hidden">
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Order Info */}
-              <div>
-                <h4 className="font-black text-sm uppercase mb-2 text-gray-700">Order Information</h4>
-                <div className="space-y-2 text-sm">
-                  <p><span className="font-bold">Order ID:</span> {order._id || order.id}</p>
-                  <p><span className="font-bold">Status:</span> <StatusBadge status={order.status} /></p>
-                  <p><span className="font-bold">Date:</span> {new Date(order.createdAt).toLocaleDateString()}</p>
-                  <p><span className="font-bold">Payment:</span> {order.paymentMethod}</p>
-                </div>
-              </div>
+      {/* HEADER */}
+      <div className="flex justify-between items-center p-6 border-b border-gray-800">
+        <h3 className="text-3xl font-black tracking-wide">
+          ORDER <span className="text-sky-500">DETAILS</span>
+        </h3>
+        <button
+          onClick={onClose}
+          className="text-gray-400 hover:text-white transition"
+        >
+          <XCircle className="h-7 w-7" />
+        </button>
+      </div>
 
-              {/* Customer Info */}
-              <div>
-                <h4 className="font-black text-sm uppercase mb-2 text-gray-700">Customer Information</h4>
-                <div className="space-y-2 text-sm">
-                  {order.user ? (
-                    <>
-                      <p><span className="font-bold">Name:</span> {order.user.name || 'N/A'}</p>
-                      <p><span className="font-bold">Email:</span> {order.user.email || 'N/A'}</p>
-                    </>
-                  ) : (
-                    <p className="text-gray-500 italic">Guest Order</p>
-                  )}
-                </div>
-              </div>
+      <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
 
-              {/* Shipping Address */}
-              <div className="md:col-span-2">
-                <h4 className="font-black text-sm uppercase mb-2 text-gray-700">Shipping Address</h4>
-                <div className="bg-gray-50 p-4 rounded text-sm">
-                  <p className="font-bold">{order.shippingAddress.fullName}</p>
-                  <p>{order.shippingAddress.addressLine1}</p>
-                  <p>{order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.zipCode}</p>
-                  <p>{order.shippingAddress.country}</p>
-                  <p className="mt-2"><span className="font-bold">Phone:</span> {order.shippingAddress.phone}</p>
-                  <p><span className="font-bold">Email:</span> {order.shippingAddress.email}</p>
-                </div>
-              </div>
-
-              {/* Order Items */}
-              <div className="md:col-span-2">
-                <h4 className="font-black text-sm uppercase mb-2 text-gray-700">Order Items</h4>
-                <div className="border rounded-lg overflow-hidden">
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th className="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase">Product</th>
-                        <th className="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase">Category</th>
-                        <th className="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase">Quantity</th>
-                        <th className="px-4 py-2 text-left text-xs font-bold text-gray-700 uppercase">Price</th>
-                        <th className="px-4 py-2 text-right text-xs font-bold text-gray-700 uppercase">Total</th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                      {order.items.map((item, index) => (
-                        <tr key={index}>
-                          <td className="px-4 py-2 text-sm font-medium">{item.name}</td>
-                          <td className="px-4 py-2 text-sm text-gray-500">{item.category}</td>
-                          <td className="px-4 py-2 text-sm">{item.quantity}</td>
-                          <td className="px-4 py-2 text-sm">₹{item.price}</td>
-                          <td className="px-4 py-2 text-sm font-bold text-right">₹{item.price * item.quantity}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                    <tfoot className="bg-gray-50">
-                      <tr>
-                        <td colSpan="4" className="px-4 py-2 text-sm font-bold text-right">Subtotal:</td>
-                        <td className="px-4 py-2 text-sm font-bold text-right">₹{order.subtotal}</td>
-                      </tr>
-                      <tr>
-                        <td colSpan="4" className="px-4 py-2 text-sm font-bold text-right">Shipping:</td>
-                        <td className="px-4 py-2 text-sm font-bold text-right">₹{order.shipping}</td>
-                      </tr>
-                      <tr>
-                        <td colSpan="4" className="px-4 py-2 text-lg font-black text-right">Total:</td>
-                        <td className="px-4 py-2 text-lg font-black text-right text-sky-500">₹{order.total}</td>
-                      </tr>
-                    </tfoot>
-                  </table>
-                </div>
-              </div>
-            </div>
+        {/* ORDER INFO */}
+        <div>
+          <h4 className="text-sm font-black uppercase text-gray-400 mb-3">Order Info</h4>
+          <div className="space-y-2 text-sm">
+            <p><span className="text-gray-400">ID:</span> {order._id || order.id}</p>
+            <p><span className="text-gray-400">Status:</span> <StatusBadge status={order.status} /></p>
+            <p><span className="text-gray-400">Date:</span> {new Date(order.createdAt).toLocaleDateString()}</p>
+            <p><span className="text-gray-400">Payment:</span> {order.paymentMethod}</p>
           </div>
         </div>
+
+        {/* CUSTOMER */}
+        <div>
+          <h4 className="text-sm font-black uppercase text-gray-400 mb-3">Customer</h4>
+          {order.user ? (
+            <div className="space-y-2 text-sm">
+              <p>{order.user.name}</p>
+              <p className="text-gray-400">{order.user.email}</p>
+            </div>
+          ) : (
+            <p className="italic text-gray-400">Guest Order</p>
+          )}
+        </div>
+
+        {/* ADDRESS */}
+        <div className="md:col-span-2">
+          <h4 className="text-sm font-black uppercase text-gray-400 mb-3">Shipping Address</h4>
+          <div className="bg-[#0b0f14] border border-gray-800 rounded-xl p-4 text-sm">
+            <p className="font-bold">{order.shippingAddress.fullName}</p>
+            <p>{order.shippingAddress.addressLine1}</p>
+            <p>
+              {order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.zipCode}
+            </p>
+            <p>{order.shippingAddress.country}</p>
+            <p className="mt-2 text-gray-400">
+              Phone: {order.shippingAddress.phone}
+            </p>
+            <p className="text-gray-400">
+              Email: {order.shippingAddress.email}
+            </p>
+          </div>
+        </div>
+
+        {/* ITEMS */}
+        <div className="md:col-span-2">
+          <h4 className="text-sm font-black uppercase text-gray-400 mb-3">Order Items</h4>
+
+          <div className="bg-[#0b0f14] border border-gray-800 rounded-xl overflow-hidden">
+
+            <table className="min-w-full text-sm">
+              <thead className="bg-black/40 text-gray-400 uppercase text-xs">
+                <tr>
+                  <th className="p-3 text-left">Product</th>
+                  <th className="p-3 text-left">Category</th>
+                  <th className="p-3 text-left">Qty</th>
+                  <th className="p-3 text-left">Price</th>
+                  <th className="p-3 text-right">Total</th>
+                </tr>
+              </thead>
+
+              <tbody className="divide-y divide-gray-800">
+                {order.items.map((item, i) => (
+                  <tr key={i}>
+                    <td className="p-3 font-semibold">{item.name}</td>
+                    <td className="p-3 text-gray-400">{item.category}</td>
+                    <td className="p-3">{item.quantity}</td>
+                    <td className="p-3">₹{item.price}</td>
+                    <td className="p-3 text-right font-bold">
+                      ₹{item.price * item.quantity}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+
+              <tfoot className="bg-black/40">
+                <tr>
+                  <td colSpan="4" className="p-3 text-right text-gray-400">Subtotal</td>
+                  <td className="p-3 text-right font-bold">₹{order.subtotal}</td>
+                </tr>
+                <tr>
+                  <td colSpan="4" className="p-3 text-right text-gray-400">Shipping</td>
+                  <td className="p-3 text-right font-bold">₹{order.shipping}</td>
+                </tr>
+                <tr>
+                  <td colSpan="4" className="p-3 text-right text-lg font-black">Total</td>
+                  <td className="p-3 text-right text-lg font-black text-sky-500">
+                    ₹{order.total}
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+
+          </div>
+        </div>
+
       </div>
     </div>
-  );
+  </div>
+);
+
 };
 
 const AdminOrders = () => {
@@ -216,166 +234,170 @@ const AdminOrders = () => {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-4xl font-black text-black italic uppercase mb-2">Order Management</h1>
-            <p className="text-sm text-gray-600 flex items-center">
-              <ArrowRight className="h-4 w-4 mr-2" />
-              Total Orders: <span className="font-bold ml-2">{orders.length}</span>
-            </p>
-          </div>
-          <div className="flex gap-4">
-            <Link
-              to="/admin/dashboard"
-              className="bg-gray-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors"
-            >
-              Dashboard
-            </Link>
-            <Link
-              to="/admin/products"
-              className="bg-sky-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-sky-600 transition-colors"
-            >
-              Products
-            </Link>
-            <button
-              onClick={loadOrders}
-              disabled={loading}
-              className="bg-emerald-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-emerald-600 transition-colors disabled:opacity-50 flex items-center"
-              title="Refresh Orders"
-            >
-              <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-              Refresh
-            </button>
-          </div>
+  <div className="bg-[#0b0f14] min-h-screen py-16 text-white">
+    <div className="max-w-7xl mx-auto px-6">
+
+      {/* HEADER */}
+      <div className="flex justify-between items-center mb-14">
+        <div>
+          <h1 className="text-5xl font-black tracking-wide">
+            ORDER <span className="text-sky-500">MANAGEMENT</span>
+          </h1>
+          <p className="text-gray-400 mt-2 flex items-center">
+            <ArrowRight className="h-4 w-4 mr-2" />
+            Total Orders: <span className="font-bold ml-2">{orders.length}</span>
+          </p>
         </div>
 
-        {/* Error Message */}
-        {error && (
-          <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg flex items-center">
-            <AlertCircle className="h-5 w-5 mr-2" />
-            {error}
-          </div>
-        )}
-
-        {/* Status Filter */}
-        <div className="mb-6 flex gap-2 flex-wrap">
-          <button
-            onClick={() => setStatusFilter('ALL')}
-            className={`px-4 py-2 rounded-lg font-bold transition-colors ${
-              statusFilter === 'ALL'
-                ? 'bg-black text-white'
-                : 'bg-white text-black hover:bg-gray-100'
-            }`}
+        <div className="flex gap-4">
+          <Link
+            to="/admin/dashboard"
+            className="bg-white/10 px-6 py-3 rounded-xl hover:bg-white/20 transition"
           >
-            All ({orders.length})
+            Dashboard
+          </Link>
+
+          <Link
+            to="/admin/products"
+            className="bg-sky-500 text-black px-6 py-3 rounded-xl font-bold hover:bg-sky-400 transition"
+          >
+            Products
+          </Link>
+
+          <button
+            onClick={loadOrders}
+            disabled={loading}
+            className="bg-emerald-500 text-black px-6 py-3 rounded-xl font-bold hover:bg-emerald-400 transition disabled:opacity-50 flex items-center"
+          >
+            <RefreshCw className={`mr-2 ${loading ? 'animate-spin' : ''}`} />
+            Refresh
           </button>
-          {['PENDING', 'PAID', 'SHIPPED', 'COMPLETED', 'CANCELLED'].map(status => {
-            const count = orders.filter(o => o.status === status).length;
-            return (
-              <button
-                key={status}
-                onClick={() => setStatusFilter(status)}
-                className={`px-4 py-2 rounded-lg font-bold transition-colors ${
-                  statusFilter === status
-                    ? 'bg-black text-white'
-                    : 'bg-white text-black hover:bg-gray-100'
-                }`}
-              >
-                {status} ({count})
-              </button>
-            );
-          })}
         </div>
-
-        {/* Orders Table */}
-        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-lg">
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-200">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-black text-gray-700 uppercase tracking-wider">Order ID</th>
-                  <th className="px-6 py-3 text-left text-xs font-black text-gray-700 uppercase tracking-wider">Customer</th>
-                  <th className="px-6 py-3 text-left text-xs font-black text-gray-700 uppercase tracking-wider">Date</th>
-                  <th className="px-6 py-3 text-left text-xs font-black text-gray-700 uppercase tracking-wider">Items</th>
-                  <th className="px-6 py-3 text-left text-xs font-black text-gray-700 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-black text-gray-700 uppercase tracking-wider">Total</th>
-                  <th className="px-6 py-3 text-left text-xs font-black text-gray-700 uppercase tracking-wider">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {filteredOrders.length === 0 ? (
-                  <tr>
-                    <td colSpan="7" className="text-center py-10 text-gray-500">
-                      {statusFilter === 'ALL' 
-                        ? 'No orders found.' 
-                        : `No orders with status "${statusFilter}".`}
-                    </td>
-                  </tr>
-                ) : (
-                  filteredOrders.map(order => (
-                    <tr key={order._id || order.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900">
-                        #{String(order._id || order.id).slice(-8).toUpperCase()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm">
-                          {order.user ? (
-                            <>
-                              <div className="font-medium text-gray-900">{order.user.name || 'N/A'}</div>
-                              <div className="text-gray-500">{order.user.email || 'N/A'}</div>
-                            </>
-                          ) : (
-                            <div className="text-gray-500 italic">Guest Order</div>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {new Date(order.createdAt).toLocaleDateString()}
-                        <br />
-                        <span className="text-xs">{new Date(order.createdAt).toLocaleTimeString()}</span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {order.items.length} item{order.items.length !== 1 ? 's' : ''}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <StatusBadge status={order.status} />
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-mono font-bold text-gray-900">
-                        ₹{order.total}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button
-                          onClick={() => handleViewOrder(order)}
-                          className="text-sky-600 hover:text-sky-800 transition-colors p-2 hover:bg-sky-50 rounded"
-                          title="View Details"
-                        >
-                          <Eye className="h-5 w-5" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* Order Details Modal */}
-        <OrderDetailsModal
-          order={selectedOrder}
-          isOpen={isModalOpen}
-          onClose={() => {
-            setIsModalOpen(false);
-            setSelectedOrder(null);
-          }}
-        />
       </div>
+
+      {/* ERROR */}
+      {error && (
+        <div className="mb-6 bg-red-900/40 border border-red-500 p-4 rounded-xl">
+          {error}
+        </div>
+      )}
+
+      {/* FILTERS */}
+      <div className="mb-8 flex flex-wrap gap-3">
+        {['ALL', 'PENDING', 'PAID', 'SHIPPED', 'COMPLETED', 'CANCELLED'].map(status => {
+          const count =
+            status === 'ALL'
+              ? orders.length
+              : orders.filter(o => o.status === status).length;
+
+          return (
+            <button
+              key={status}
+              onClick={() => setStatusFilter(status)}
+              className={`px-5 py-2 rounded-xl font-bold transition ${
+                statusFilter === status
+                  ? 'bg-sky-500 text-black'
+                  : 'bg-white/10 hover:bg-white/20'
+              }`}
+            >
+              {status} ({count})
+            </button>
+          );
+        })}
+      </div>
+
+      {/* DARK TABLE */}
+      <div className="bg-[#121821] border border-gray-800 rounded-2xl overflow-hidden shadow-xl">
+        <div className="overflow-x-auto">
+
+          <table className="min-w-full">
+            <thead className="bg-black/40 text-gray-400 uppercase text-sm">
+              <tr>
+                <th className="p-4 text-left">Order</th>
+                <th className="p-4 text-left">Customer</th>
+                <th className="p-4 text-left">Date</th>
+                <th className="p-4 text-left">Items</th>
+                <th className="p-4 text-left">Status</th>
+                <th className="p-4 text-left">Total</th>
+                <th className="p-4 text-left">Action</th>
+              </tr>
+            </thead>
+
+            <tbody className="divide-y divide-gray-800">
+
+              {filteredOrders.length === 0 ? (
+                <tr>
+                  <td colSpan="7" className="text-center py-16 text-gray-400">
+                    No orders found
+                  </td>
+                </tr>
+              ) : (
+                filteredOrders.map(order => (
+                  <tr key={order._id || order.id} className="hover:bg-white/5 transition">
+
+                    <td className="p-4 font-mono text-sky-400">
+                      #{String(order._id || order.id).slice(-8).toUpperCase()}
+                    </td>
+
+                    <td className="p-4">
+                      {order.user ? (
+                        <>
+                          <div className="font-semibold">{order.user.name || 'N/A'}</div>
+                          <div className="text-gray-400 text-sm">{order.user.email || 'N/A'}</div>
+                        </>
+                      ) : (
+                        <span className="text-gray-400 italic">Guest</span>
+                      )}
+                    </td>
+
+                    <td className="p-4 text-gray-400">
+                      {new Date(order.createdAt).toLocaleDateString()}
+                    </td>
+
+                    <td className="p-4 text-gray-400">
+                      {order.items.length}
+                    </td>
+
+                    <td className="p-4">
+                      <StatusBadge status={order.status} />
+                    </td>
+
+                    <td className="p-4 font-black text-sky-400">
+                      ₹{order.total}
+                    </td>
+
+                    <td className="p-4">
+                      <button
+                        onClick={() => handleViewOrder(order)}
+                        className="bg-white/10 hover:bg-sky-500/20 p-2 rounded-lg"
+                      >
+                        <Eye size={18} />
+                      </button>
+                    </td>
+
+                  </tr>
+                ))
+              )}
+
+            </tbody>
+          </table>
+
+        </div>
+      </div>
+
+      {/* MODAL */}
+      <OrderDetailsModal
+        order={selectedOrder}
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedOrder(null);
+        }}
+      />
     </div>
-  );
+  </div>
+);
+
 };
 
 export default AdminOrders;
-

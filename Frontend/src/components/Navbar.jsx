@@ -5,6 +5,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { ShoppingCart, Search, Menu, X, User as UserIcon } from 'lucide-react';
 // 🔑 Import the useAuth hook
 import { useAuth } from '../Context/AuthContext'; 
+import logo from '../../assets/Logo_Letters-bg-11 (1).png';
 
 const Navbar = ({ cartCount }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -37,14 +38,17 @@ const Navbar = ({ cartCount }) => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-20 gap-6">
           
           {/* Logo */}
-          <Link to="/" className="flex-shrink-0 group">
-            <h1 className="text-2xl font-black italic tracking-tighter text-black group-hover:text-sky-500 transition-colors">
-              XTREME <span className="text-sky-500">KOLORZ</span>
-            </h1>
-          </Link>
+          <Link to="/" className="flex items-center bg-black px-3 py-2 rounded-lg shadow-md">
+  <img
+    src={logo}
+    alt="Painting Shop Logo"
+    className="h-12 w-auto object-contain"
+  />
+</Link>
+
 
           {/* Desktop Search */}
           <div className="hidden lg:flex flex-1 max-w-lg mx-8 relative">

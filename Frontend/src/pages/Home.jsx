@@ -46,69 +46,98 @@ const Home = ({ onAddToCart }) => {
   ];
 
   const galleryImages = [
-    'https://images.unsplash.com/photo-1596700812970-205167664f3d?auto=format&fit=crop&q=80&w=400&h=300',
-    'https://images.unsplash.com/photo-1596700812970-205167664f3d?auto=format&fit=crop&q=80&w=400&h=600',
-    'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&q=80&w=400&h=300',
-    'https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&q=80&w=400&h=600',
-    'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&q=80&w=400&h=300',
-    'https://images.unsplash.com/photo-1542282088-fe8426682b8f?auto=format&fit=crop&q=80&w=400&h=600',
-    'https://images.unsplash.com/photo-1503376763036-066120622c74?auto=format&fit=crop&q=80&w=400&h=300',
-    'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&q=80&w=400&h=600',
-  ].slice(0, 8);
+  'https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80',
+
+  'https://images.unsplash.com/photo-1542282088-fe8426682b8f?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80',
+
+  // 'https://images.unsplash.com/photo-1549924231-f129b911e442?auto=format&fit=crop&w=800&q=80',
+  // 'https://images.unsplash.com/photo-1605559424843-9e6fdd2b9bb1?auto=format&fit=crop&w=800&q=80',
+  // 'https://images.unsplash.com/photo-1603386329225-868f9b1ed2e1?auto=format&fit=crop&w=800&q=80',
+  // 'https://images.unsplash.com/photo-1619767886558-efdc7b0d3b87?auto=format&fit=crop&w=800&q=80',
+];
+
 
   return (
     <div className="bg-white">
 
       {/* HERO SECTION */}
-      <div className="relative h-[75vh] sm:h-[90vh] min-h-[550px] w-full overflow-hidden">
+<div className="relative h-[75vh] sm:h-[90vh] min-h-[550px] w-full overflow-hidden">
 
-        <img
-          src="https://images.unsplash.com/photo-1542282088-fe8426682b8f?auto=format&fit=crop&q=80&w=1920"
-          alt="Custom painted car finish"
-          className="w-full h-full object-cover object-center scale-105 transition-transform duration-[5000ms] hover:scale-110"
-        />
+  {/* YouTube Background */}
+  <iframe
+    className="absolute inset-0 w-full h-full scale-110 pointer-events-none"
+    src="https://www.youtube.com/embed/xsJwrpsrVX4?autoplay=1&mute=1&loop=1&playlist=xsJwrpsrVX4&controls=0&showinfo=0&modestbranding=1&rel=0"
+    title="Hero Background Video"
+    frameBorder="0"
+    allow="autoplay; encrypted-media"
+    allowFullScreen
+  />
 
-        <div className="absolute inset-0 bg-black/60"></div>
+  {/* Dark Overlay */}
+  <div className="absolute inset-0 bg-black/60"></div>
 
-        <div className="absolute inset-0 flex items-center z-20">
-          <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
-            <div className="max-w-2xl animate-fade-in">
+  {/* CONTENT */}
+  <div className="absolute inset-0 flex items-center z-20">
+    <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
+      <div className="max-w-2xl animate-fade-in">
 
-              <span className="text-white font-semibold tracking-[0.2em] uppercase mb-3 block text-sm sm:text-base">
-                Unlock the Ultimate Finish
-              </span>
+        <span className="text-white font-semibold tracking-[0.2em] uppercase mb-3 block text-sm sm:text-base">
+          Unlock the Ultimate Finish
+        </span>
 
-              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-white mb-4 leading-tight italic drop-shadow-2xl">
-                XTREME <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-white">
-                  PEARL PIGMENTS
-                </span>
-              </h1>
+        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-white mb-4 leading-tight italic drop-shadow-2xl">
+          KUSTOM KOATS <br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-white">
+            PEARL PIGMENTS
+          </span>
+        </h1>
 
-              <p className="text-gray-200 text-base sm:text-lg mb-8 max-w-lg">
-                Engineered for maximum depth, durability, and mesmerizing color shift effects.
-              </p>
+        <p className="text-gray-200 text-base sm:text-lg mb-8 max-w-lg">
+          Engineered for maximum depth, durability, and mesmerizing color shift effects.
+        </p>
 
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link
-                  to="/shop"
-                  className="bg-sky-500 text-white font-bold py-3 px-8 rounded-sm hover:bg-sky-600 hover:shadow-lg transition-all tracking-wider uppercase text-sm sm:text-base"
-                >
-                  Shop All Colors
-                </Link>
+        <div className="flex flex-col sm:flex-row gap-4">
+          <Link
+            to="/shop"
+            className="bg-sky-500 text-white font-bold py-3 px-8 rounded-sm hover:bg-sky-600 hover:shadow-lg transition-all tracking-wider uppercase"
+          >
+            Shop All Colors
+          </Link>
 
-                <Link
-                  to="/contact"
-                  className="bg-transparent border border-white text-white hover:bg-white hover:text-black transition-all py-3 px-8 font-semibold rounded-sm tracking-wider uppercase text-sm sm:text-base"
-                >
-                  Get Technical Advice
-                </Link>
-              </div>
-
-            </div>
-          </div>
+          <Link
+            to="/contact"
+            className="border border-white text-white hover:bg-white hover:text-black transition-all py-3 px-8 font-semibold rounded-sm tracking-wider uppercase"
+          >
+            Get Technical Advice
+          </Link>
         </div>
+
       </div>
+    </div>
+  </div>
+
+  {/* AUDIO TOGGLE */}
+  <button
+    onClick={() => {
+      const iframe = document.querySelector("iframe");
+      const src = iframe.src;
+      iframe.src = src.includes("mute=1")
+        ? src.replace("mute=1", "mute=0")
+        : src.replace("mute=0", "mute=1");
+    }}
+    className="absolute bottom-6 right-6 z-30 bg-black/60 text-white px-4 py-2 rounded-full hover:bg-black transition"
+  >
+    🔊 Sound
+  </button>
+
+</div>
+
 
       {/* FEATURES */}
       <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-16">

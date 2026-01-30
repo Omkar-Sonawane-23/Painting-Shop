@@ -234,375 +234,385 @@ const AdminProducts = () => {
     }
 
     return (
-        <div className="bg-gray-50 min-h-screen py-12">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                {/* Header */}
-                <div className="flex justify-between items-center mb-8">
-                    <div>
-                        <h1 className="text-4xl font-black text-black italic uppercase mb-2">Product Management</h1>
-                        <p className="text-sm text-gray-600 flex items-center">
-                            <ArrowRight className="h-4 w-4 mr-2" /> 
-                            API Endpoint: <code className="bg-gray-200 px-2 py-1 rounded text-xs ml-2">{API_PRODUCTS_ENDPOINT}</code>
-                        </p>
-                    </div>
-                    <div className="flex gap-4">
-                        <Link 
-                            to="/admin/dashboard"
-                            className="bg-gray-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors"
-                        >
-                            Dashboard
-                        </Link>
-                        <Link 
-                            to="/admin/orders"
-                            className="bg-sky-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-sky-600 transition-colors"
-                        >
-                            Orders
-                        </Link>
-                        <button 
-                            onClick={() => { 
-                                setIsAdding(true); 
-                                setEditingProduct(null); 
-                                setNewProduct({ 
-                                    name: '', 
-                                    category: 'Solid Pearls', 
-                                    price: 0, 
-                                    image: '', 
-                                    description: '',
-                                    tag: '',
-                                    stock: 0
-                                }); 
-                            }}
-                            className="bg-sky-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-sky-600 transition-colors flex items-center shadow-md"
-                        >
-                            <Plus className="h-5 w-5 mr-2" /> Add New Product
-                        </button>
-                    </div>
-                </div>
+  <div className="bg-[#0b0f14] min-h-screen py-16 text-white">
+    <div className="max-w-7xl mx-auto px-6">
 
-                {/* Success/Error Messages */}
-                {success && (
-                    <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg flex items-center">
-                        <CheckCircle className="h-5 w-5 mr-2" />
-                        {success}
-                    </div>
-                )}
-                {error && (
-                    <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg flex items-center">
-                        <AlertCircle className="h-5 w-5 mr-2" />
-                        {error}
-                    </div>
-                )}
-
-                {/* Add New Product Form */}
-                {isAdding && (
-                    <ProductForm 
-                        product={newProduct} 
-                        categories={categories}
-                        onChange={handleProductChange}
-                        onSave={handleSave}
-                        onCancel={() => {
-                            setIsAdding(false);
-                            setError('');
-                            setSuccess('');
-                        }}
-                        isEditing={false}
-                    />
-                )}
-                
-                {/* Products Table */}
-                <div className="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-lg">
-                    <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-gray-200">
-                            <thead className="bg-gray-200">
-                                <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-black text-gray-700 uppercase tracking-wider">Image</th>
-                                    <th className="px-6 py-3 text-left text-xs font-black text-gray-700 uppercase tracking-wider">Name</th>
-                                    <th className="px-6 py-3 text-left text-xs font-black text-gray-700 uppercase tracking-wider">Category</th>
-                                    <th className="px-6 py-3 text-left text-xs font-black text-gray-700 uppercase tracking-wider">Price (₹)</th>
-                                    <th className="px-6 py-3 text-left text-xs font-black text-gray-700 uppercase tracking-wider">Stock</th>
-                                    <th className="px-6 py-3 text-left text-xs font-black text-gray-700 uppercase tracking-wider">Tag</th>
-                                    <th className="px-6 py-3 text-left text-xs font-black text-gray-700 uppercase tracking-wider">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
-                                {productsData.map(product => {
-                                    const productId = product._id || product.id;
-                                    const isEditing = editingProduct && (editingProduct._id === productId || editingProduct.id === productId);
-                                    
-                                    return (
-                                        <tr key={productId} className="hover:bg-gray-50">
-                                            {isEditing ? (
-                                                <ProductEditRow 
-                                                    product={editingProduct} 
-                                                    categories={categories}
-                                                    onSave={handleSave}
-                                                    onCancel={() => {
-                                                        setEditingProduct(null);
-                                                        setError('');
-                                                    }}
-                                                    onEditChange={handleEditChange}
-                                                />
-                                            ) : (
-                                                <>
-                                                    <td className="px-6 py-4 whitespace-nowrap">
-                                                        {product.image ? (
-                                                            <img 
-                                                                src={product.image} 
-                                                                alt={product.name}
-                                                                className="h-16 w-16 object-cover rounded"
-                                                                onError={(e) => {
-                                                                    e.target.src = 'https://placehold.co/64x64/e5e7eb/4b5563?text=No+Image';
-                                                                }}
-                                                            />
-                                                        ) : (
-                                                            <div className="h-16 w-16 bg-gray-200 rounded flex items-center justify-center text-xs text-gray-400">
-                                                                No Image
-                                                            </div>
-                                                        )}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap">
-                                                        <div className="text-sm font-medium text-black">{product.name}</div>
-                                                        {product.description && (
-                                                            <div className="text-xs text-gray-500 mt-1 max-w-xs truncate">
-                                                                {product.description}
-                                                            </div>
-                                                        )}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.category}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-mono font-bold text-black">₹{product.price}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product.stock || 0}</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap">
-                                                        {product.tag && (
-                                                            <span className="px-2 py-1 text-xs font-bold bg-sky-100 text-sky-800 rounded">
-                                                                {product.tag}
-                                                            </span>
-                                                        )}
-                                                    </td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                        <div className="flex space-x-2">
-                                                            <button 
-                                                                onClick={() => setEditingProduct({ ...product, id: productId })}
-                                                                className="text-sky-600 hover:text-sky-800 transition-colors p-2 hover:bg-sky-50 rounded"
-                                                                title="Edit"
-                                                            >
-                                                                <Edit className="h-5 w-5" />
-                                                            </button>
-                                                            <button 
-                                                                onClick={() => handleDelete(productId)}
-                                                                className="text-red-600 hover:text-red-800 transition-colors p-2 hover:bg-red-50 rounded"
-                                                                title="Delete"
-                                                            >
-                                                                <Trash2 className="h-5 w-5" />
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                </>
-                                            )}
-                                        </tr>
-                                    );
-                                })}
-                                {productsData.length === 0 && !loading && (
-                                    <tr>
-                                        <td colSpan="7" className="text-center py-10 text-gray-500">
-                                            No products found. Click "Add New Product" to get started!
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+      {/* HEADER */}
+      <div className="flex justify-between items-center mb-14">
+        <div>
+          <h1 className="text-5xl font-black tracking-wide">
+            PRODUCT <span className="text-sky-500">MANAGEMENT</span>
+          </h1>
+          <p className="text-gray-400 mt-2">Control inventory & pricing</p>
         </div>
-    );
+
+        <div className="flex gap-4">
+          <Link
+            to="/admin/dashboard"
+            className="bg-white/10 px-6 py-3 rounded-xl hover:bg-white/20 transition"
+          >
+            Dashboard
+          </Link>
+
+          <Link
+            to="/admin/orders"
+            className="bg-sky-500 text-black px-6 py-3 rounded-xl font-bold hover:bg-sky-400 transition"
+          >
+            Orders
+          </Link>
+
+          <button
+            onClick={() => {
+              setIsAdding(true);
+              setEditingProduct(null);
+            }}
+            className="bg-sky-500 text-black px-7 py-3 rounded-xl font-black hover:bg-sky-400 transition flex items-center"
+          >
+            <Plus className="mr-2" /> Add Product
+          </button>
+        </div>
+      </div>
+
+      {/* ALERTS */}
+      {success && (
+        <div className="mb-6 bg-emerald-900/40 border border-emerald-500 p-4 rounded-xl">
+          {success}
+        </div>
+      )}
+      {error && (
+        <div className="mb-6 bg-red-900/40 border border-red-500 p-4 rounded-xl">
+          {error}
+        </div>
+      )}
+
+      {/* ADD FORM MODAL */}
+      {isAdding && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur flex items-center justify-center z-50">
+          <div className="bg-[#121821] p-8 rounded-2xl border border-sky-500 w-full max-w-2xl">
+            <ProductForm
+              product={newProduct}
+              categories={categories}
+              onChange={handleProductChange}
+              onSave={handleSave}
+              onCancel={() => setIsAdding(false)}
+              isEditing={false}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* PRODUCT TABLE DARK */}
+      <div className="bg-[#121821] border border-gray-800 rounded-2xl overflow-hidden shadow-xl">
+
+        <table className="min-w-full">
+          <thead className="bg-black/40 text-gray-400 text-sm uppercase">
+            <tr>
+              <th className="p-4 text-left">Image</th>
+              <th className="p-4 text-left">Name</th>
+              <th className="p-4 text-left">Category</th>
+              <th className="p-4 text-left">Price</th>
+              <th className="p-4 text-left">Stock</th>
+              <th className="p-4 text-left">Tag</th>
+              <th className="p-4 text-left">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody className="divide-y divide-gray-800">
+
+            {productsData.map(product => {
+              const id = product._id || product.id;
+              const isEditing =
+                editingProduct &&
+                (editingProduct._id === id || editingProduct.id === id);
+
+              return (
+                <tr key={id} className="hover:bg-white/5 transition">
+
+                  {isEditing ? (
+                    <ProductEditRow
+                      product={editingProduct}
+                      categories={categories}
+                      onSave={handleSave}
+                      onCancel={() => setEditingProduct(null)}
+                      onEditChange={handleEditChange}
+                    />
+                  ) : (
+                    <>
+                      <td className="p-4">
+                        <img
+                          src={product.image || "https://placehold.co/64x64/111/555?text=No+Img"}
+                          className="h-14 w-14 rounded-xl object-cover"
+                        />
+                      </td>
+
+                      <td className="p-4 font-semibold">{product.name}</td>
+
+                      <td className="p-4 text-gray-400">{product.category}</td>
+
+                      <td className="p-4 text-sky-400 font-black">
+                        ₹{product.price}
+                      </td>
+
+                      <td className="p-4 text-gray-400">
+                        {product.stock || 0}
+                      </td>
+
+                      <td className="p-4">
+                        {product.tag && (
+                          <span className="bg-sky-500/20 text-sky-400 px-3 py-1 rounded-full text-xs">
+                            {product.tag}
+                          </span>
+                        )}
+                      </td>
+
+                      <td className="p-4 flex gap-2">
+                        <button
+                          onClick={() =>
+                            setEditingProduct({ ...product, id })
+                          }
+                          className="bg-white/10 hover:bg-sky-500/20 p-2 rounded-lg"
+                        >
+                          <Edit size={18} />
+                        </button>
+
+                        <button
+                          onClick={() => handleDelete(id)}
+                          className="bg-red-500/20 hover:bg-red-500/40 p-2 rounded-lg"
+                        >
+                          <Trash2 size={18} className="text-red-400" />
+                        </button>
+                      </td>
+                    </>
+                  )}
+                </tr>
+              );
+            })}
+
+            {productsData.length === 0 && (
+              <tr>
+                <td colSpan="7" className="text-center py-14 text-gray-400">
+                  No products added yet 🚀
+                </td>
+              </tr>
+            )}
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+);
+
 };
 
 // Product Form Component
 const ProductForm = ({ product, categories, onChange, onSave, onCancel, isEditing }) => (
-    <div className="bg-white p-6 mb-8 border-2 border-sky-500 shadow-xl rounded-lg">
-        <h2 className="text-2xl font-black italic mb-6 border-b pb-3">
-            {isEditing ? 'Edit Product' : 'Add New Product'}
-        </h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-                <label className="block text-sm font-bold text-gray-700 mb-1">Product Name *</label>
-                <input 
-                    name="name" 
-                    value={product.name} 
-                    onChange={onChange} 
-                    placeholder="e.g., 24 Karat Gold" 
-                    required 
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md text-black focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                />
-            </div>
-            
-            <div>
-                <label className="block text-sm font-bold text-gray-700 mb-1">Category *</label>
-                <select 
-                    name="category" 
-                    value={product.category} 
-                    onChange={onChange} 
-                    required 
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md text-black focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                >
-                    {categories.map(cat => (
-                        <option key={cat} value={cat}>{cat}</option>
-                    ))}
-                </select>
-            </div>
-            
-            <div>
-                <label className="block text-sm font-bold text-gray-700 mb-1">Price (₹) *</label>
-                <input 
-                    name="price" 
-                    type="number" 
-                    value={product.price} 
-                    onChange={onChange} 
-                    placeholder="1499" 
-                    required 
-                    min="0" 
-                    step="0.01"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md text-black focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                />
-            </div>
-            
-            <div>
-                <label className="block text-sm font-bold text-gray-700 mb-1">Stock Quantity</label>
-                <input 
-                    name="stock" 
-                    type="number" 
-                    value={product.stock || 0} 
-                    onChange={onChange} 
-                    placeholder="0" 
-                    min="0"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md text-black focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                />
-            </div>
-            
-            <div>
-                <label className="block text-sm font-bold text-gray-700 mb-1">Tag (Optional)</label>
-                <input 
-                    name="tag" 
-                    value={product.tag || ''} 
-                    onChange={onChange} 
-                    placeholder="e.g., Best Seller, New, Popular" 
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md text-black focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                />
-            </div>
-            
-            <div>
-                <label className="block text-sm font-bold text-gray-700 mb-1">Image URL</label>
-                <input 
-                    name="image" 
-                    value={product.image || ''} 
-                    onChange={onChange} 
-                    placeholder="https://example.com/image.jpg" 
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md text-black focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                />
-            </div>
-            
-            <div className="md:col-span-2">
-                <label className="block text-sm font-bold text-gray-700 mb-1">Description</label>
-                <textarea 
-                    name="description" 
-                    value={product.description || ''} 
-                    onChange={onChange} 
-                    placeholder="Product description..." 
-                    rows="3"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md text-black focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-                />
-            </div>
-        </div>
-        
-        <div className="flex justify-end space-x-3 mt-6 pt-4 border-t">
-            <button 
-                type="button" 
-                onClick={onCancel} 
-                className="bg-gray-300 text-black font-bold py-2 px-6 rounded-lg hover:bg-gray-400 transition-colors flex items-center"
-            >
-                <X className="h-5 w-5 mr-2" /> Cancel
-            </button>
-            <button 
-                type="button" 
-                onClick={() => onSave(product)} 
-                className="bg-sky-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-sky-600 transition-colors flex items-center"
-            >
-                <Save className="h-5 w-5 mr-2" /> {isEditing ? 'Update Product' : 'Save Product'}
-            </button>
-        </div>
+  <div className="bg-[#121821] p-8 mb-8 border border-sky-500 shadow-2xl rounded-2xl text-white">
+
+    <h2 className="text-3xl font-black mb-8">
+      {isEditing ? (
+        <>EDIT <span className="text-sky-500">PRODUCT</span></>
+      ) : (
+        <>ADD <span className="text-sky-500">PRODUCT</span></>
+      )}
+    </h2>
+
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+      {/* NAME */}
+      <div>
+        <label className="text-sm font-bold text-gray-400">Product Name *</label>
+        <input
+          name="name"
+          value={product.name}
+          onChange={onChange}
+          placeholder="Premium Pearl Gold"
+          className="w-full mt-1 px-4 py-3 rounded-xl bg-[#0b0f14] border border-gray-700 focus:border-sky-500 outline-none text-white"
+        />
+      </div>
+
+      {/* CATEGORY */}
+      <div>
+        <label className="text-sm font-bold text-gray-400">Category *</label>
+        <select
+          name="category"
+          value={product.category}
+          onChange={onChange}
+          className="w-full mt-1 px-4 py-3 rounded-xl bg-[#0b0f14] border border-gray-700 focus:border-sky-500 outline-none text-white"
+        >
+          {categories.map(cat => (
+            <option key={cat} value={cat}>{cat}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* PRICE */}
+      <div>
+        <label className="text-sm font-bold text-gray-400">Price (₹) *</label>
+        <input
+          name="price"
+          type="number"
+          value={product.price}
+          onChange={onChange}
+          placeholder="1499"
+          className="w-full mt-1 px-4 py-3 rounded-xl bg-[#0b0f14] border border-gray-700 focus:border-sky-500 outline-none text-white"
+        />
+      </div>
+
+      {/* STOCK */}
+      <div>
+        <label className="text-sm font-bold text-gray-400">Stock</label>
+        <input
+          name="stock"
+          type="number"
+          value={product.stock || 0}
+          onChange={onChange}
+          className="w-full mt-1 px-4 py-3 rounded-xl bg-[#0b0f14] border border-gray-700 focus:border-sky-500 outline-none text-white"
+        />
+      </div>
+
+      {/* TAG */}
+      <div>
+        <label className="text-sm font-bold text-gray-400">Tag</label>
+        <input
+          name="tag"
+          value={product.tag || ''}
+          onChange={onChange}
+          placeholder="Best Seller"
+          className="w-full mt-1 px-4 py-3 rounded-xl bg-[#0b0f14] border border-gray-700 focus:border-sky-500 outline-none text-white"
+        />
+      </div>
+
+      {/* IMAGE */}
+      <div>
+        <label className="text-sm font-bold text-gray-400">Image URL</label>
+        <input
+          name="image"
+          value={product.image || ''}
+          onChange={onChange}
+          placeholder="https://..."
+          className="w-full mt-1 px-4 py-3 rounded-xl bg-[#0b0f14] border border-gray-700 focus:border-sky-500 outline-none text-white"
+        />
+      </div>
+
+      {/* DESCRIPTION */}
+      <div className="md:col-span-2">
+        <label className="text-sm font-bold text-gray-400">Description</label>
+        <textarea
+          name="description"
+          value={product.description || ''}
+          onChange={onChange}
+          rows="4"
+          placeholder="Product details..."
+          className="w-full mt-1 px-4 py-3 rounded-xl bg-[#0b0f14] border border-gray-700 focus:border-sky-500 outline-none text-white"
+        />
+      </div>
     </div>
+
+    {/* ACTION BUTTONS */}
+    <div className="flex justify-end gap-4 mt-10">
+
+      <button
+        type="button"
+        onClick={onCancel}
+        className="bg-gray-700 hover:bg-gray-600 px-6 py-3 rounded-xl font-bold flex items-center transition"
+      >
+        <X className="w-5 h-5 mr-2" /> Cancel
+      </button>
+
+      <button
+        type="button"
+        onClick={() => onSave(product)}
+        className="bg-sky-500 hover:bg-sky-400 text-black px-7 py-3 rounded-xl font-black flex items-center transition shadow-lg"
+      >
+        <Save className="w-5 h-5 mr-2" />
+        {isEditing ? 'Update Product' : 'Save Product'}
+      </button>
+
+    </div>
+  </div>
 );
+
 
 // Inline Edit Row Component
 const ProductEditRow = ({ product, categories, onSave, onCancel, onEditChange }) => {
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        onEditChange(prev => ({ ...prev, [name]: value }));
-    };
-    
-    return (
-        <td colSpan="7" className="p-4 bg-sky-50">
-            <div className="grid grid-cols-1 md:grid-cols-6 gap-3 items-center">
-                <input 
-                    name="name" 
-                    value={product.name} 
-                    onChange={handleChange} 
-                    placeholder="Name"
-                    className="px-3 py-2 border rounded text-black text-sm"
-                />
-                <select 
-                    name="category" 
-                    value={product.category} 
-                    onChange={handleChange} 
-                    className="px-3 py-2 border rounded text-black text-sm"
-                >
-                    {categories.map(cat => (
-                        <option key={cat} value={cat}>{cat}</option>
-                    ))}
-                </select>
-                <input 
-                    name="price" 
-                    type="number" 
-                    value={product.price} 
-                    onChange={handleChange} 
-                    placeholder="Price"
-                    className="px-3 py-2 border rounded text-black text-sm"
-                />
-                <input 
-                    name="stock" 
-                    type="number" 
-                    value={product.stock || 0} 
-                    onChange={handleChange} 
-                    placeholder="Stock"
-                    className="px-3 py-2 border rounded text-black text-sm"
-                />
-                <input 
-                    name="image" 
-                    value={product.image || ''} 
-                    onChange={handleChange} 
-                    placeholder="Image URL"
-                    className="px-3 py-2 border rounded text-black text-sm"
-                />
-                <div className="flex space-x-2">
-                    <button 
-                        onClick={() => onSave({ ...product, _id: product._id || product.id })} 
-                        className="bg-emerald-500 text-white p-2 rounded hover:bg-emerald-600 transition-colors"
-                        title="Save"
-                    >
-                        <Save className="h-5 w-5" />
-                    </button>
-                    <button 
-                        onClick={onCancel} 
-                        className="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition-colors"
-                        title="Cancel"
-                    >
-                        <X className="h-5 w-5" />
-                    </button>
-                </div>
-            </div>
-        </td>
-    );
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    onEditChange(prev => ({ ...prev, [name]: value }));
+  };
+
+  return (
+    <td colSpan="7" className="p-5 bg-[#0b0f14] border-t border-sky-500">
+      <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-center text-white">
+
+        <input
+          name="name"
+          value={product.name}
+          onChange={handleChange}
+          placeholder="Product Name"
+          className="px-4 py-3 rounded-xl bg-[#121821] border border-gray-700 focus:border-sky-500 outline-none"
+        />
+
+        <select
+          name="category"
+          value={product.category}
+          onChange={handleChange}
+          className="px-4 py-3 rounded-xl bg-[#121821] border border-gray-700 focus:border-sky-500 outline-none"
+        >
+          {categories.map(cat => (
+            <option key={cat} value={cat}>{cat}</option>
+          ))}
+        </select>
+
+        <input
+          name="price"
+          type="number"
+          value={product.price}
+          onChange={handleChange}
+          placeholder="Price"
+          className="px-4 py-3 rounded-xl bg-[#121821] border border-gray-700 focus:border-sky-500 outline-none"
+        />
+
+        <input
+          name="stock"
+          type="number"
+          value={product.stock || 0}
+          onChange={handleChange}
+          placeholder="Stock"
+          className="px-4 py-3 rounded-xl bg-[#121821] border border-gray-700 focus:border-sky-500 outline-none"
+        />
+
+        <input
+          name="image"
+          value={product.image || ''}
+          onChange={handleChange}
+          placeholder="Image URL"
+          className="px-4 py-3 rounded-xl bg-[#121821] border border-gray-700 focus:border-sky-500 outline-none"
+        />
+
+        <div className="flex gap-3">
+
+          <button
+            onClick={() => onSave({ ...product, _id: product._id || product.id })}
+            className="bg-emerald-500 hover:bg-emerald-400 text-black p-3 rounded-xl transition shadow-lg"
+            title="Save"
+          >
+            <Save className="h-5 w-5" />
+          </button>
+
+          <button
+            onClick={onCancel}
+            className="bg-red-500 hover:bg-red-400 text-black p-3 rounded-xl transition shadow-lg"
+            title="Cancel"
+          >
+            <X className="h-5 w-5" />
+          </button>
+
+        </div>
+      </div>
+    </td>
+  );
 };
+
 
 export default AdminProducts;
