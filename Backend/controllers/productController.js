@@ -29,44 +29,63 @@ async function getProductById(req, res) {
 // POST create new product (admin only)
 async function createProduct(req, res) {
   try {
-    const { name, description, category, price, tag, stock } = req.body;
+    console.log("📥 BODY:", req.body);
+    console.log("🖼 FILES:", req.files);
 
-    // 1. Log the direct file upload result from Cloudinary
-    console.log('--- Direct Cloudinary Upload Log ---');
-    console.log('Files received and uploaded:', req.files);
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({
+        message: "At least one product image is required",
+      });
+    }
 
-    // 2. Map the uploaded file paths (Cloudinary URLs) to an array
-    const imageUrls = req.files ? req.files.map(file => file.path) : [];
-    console.log('Final URLs being saved to DB:', imageUrls);
+    const {
+      name,
+      description,
+      category,
+      price,
+      tag,
+      stock,
+    } = req.body;
 
-    const product = new Product({
+    if (!name || !category || !price) {
+      return res.status(400).json({
+        message: "Name, category and price are required",
+      });
+    }
+
+    const imageUrls = req.files.map((file) => file.path);
+
+    const product = await Product.create({
       name,
       description,
       category,
       price: Number(price),
-      images: imageUrls, // Direct Cloudinary URLs
+      images: imageUrls,
       tag,
-      stock: stock || 0
+      stock: Number(stock || 0),
     });
 
-    await product.save();
-    console.log('✅ Product and images saved successfully');
-    res.status(201).json(product);
+    return res.status(201).json(product);
   } catch (error) {
-    console.error('❌ Upload Error:', error);
-    res.status(500).json({ message: 'Failed to upload images and save product' });
+    console.error("❌ CREATE PRODUCT ERROR:", error);
+
+    return res.status(500).json({
+      message: "Product creation failed",
+      error: error.message,
+    });
   }
 }
+
+
 
 // PUT update product (admin only)
 async function updateProduct(req, res) {
   try {
     const { name, description, category, price, tag, stock } = req.body;
     const product = await Product.findById(req.params.id);
-    
+
     if (!product) return res.status(404).json({ message: 'Product not found' });
 
-    // Update fields
     if (name !== undefined) product.name = name;
     if (description !== undefined) product.description = description;
     if (category !== undefined) product.category = category;
@@ -74,18 +93,18 @@ async function updateProduct(req, res) {
     if (tag !== undefined) product.tag = tag;
     if (stock !== undefined) product.stock = Number(stock);
 
-    // If a new image is uploaded, update it
-    if (req.file) {
-      product.image = req.file.path;
+    if (req.files && req.files.length > 0) {
+      product.images = req.files.map(file => file.path);
     }
 
     await product.save();
     res.json(product);
   } catch (error) {
-    console.error('Error updating product:', error);
+    console.error('Update error:', error);
     res.status(500).json({ message: 'Failed to update product' });
   }
 }
+
 // ... (rest of the controller)
 
 // DELETE product (admin only)

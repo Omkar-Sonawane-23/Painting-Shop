@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { requireAuth, requireRole } = require('../middleware/authmiddleware');
+const upload = require('../middleware/uploadMiddleware');
+
 const {
   getAllProducts,
   getProductById,
@@ -9,13 +11,27 @@ const {
   deleteProduct
 } = require('../controllers/productController');
 
-// Public routes
+// Public
 router.get('/', getAllProducts);
 router.get('/:id', getProductById);
 
-// Admin-only routes
-router.post('/', requireAuth, requireRole('ADMIN'), createProduct);
-router.put('/:id', requireAuth, requireRole('ADMIN'), updateProduct);
+// Admin
+router.post(
+  '/',
+  requireAuth,
+  requireRole('ADMIN'),
+  upload.array('images', 5), // 🔥 THIS WAS MISSING
+  createProduct
+);
+
+router.put(
+  '/:id',
+  requireAuth,
+  requireRole('ADMIN'),
+  upload.array('images', 5),
+  updateProduct
+);
+
 router.delete('/:id', requireAuth, requireRole('ADMIN'), deleteProduct);
 
 module.exports = router;
