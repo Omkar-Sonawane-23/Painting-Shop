@@ -1,3 +1,5 @@
+// server.js (UPDATED)
+
 require('dotenv').config();
 const express = require('express');
 const cookieParser = require('cookie-parser');
@@ -20,7 +22,17 @@ app.use(helmet());
 app.use(express.json());
 app.use(cookieParser());
 
+// CORS - allow React app origin (set in env or change to your front-end origin)
 
+// rate limiter for auth endpoints
+// const limiter = rateLimit({
+//   windowMs: 1 * 60 * 1000,
+//   max: 10,
+//   message: 'Too many requests, try again later'
+// });
+// app.use('/api/auth', limiter);
+
+// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
