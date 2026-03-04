@@ -119,6 +119,7 @@ const AdminProducts = () => {
         setNewProduct(prev => ({ ...prev, [name]: value }));
     };
 
+<<<<<<< HEAD
 const mockSaveProduct = async (product, token) => {
     const formData = new FormData();
     formData.append('name', product.name);
@@ -140,6 +141,19 @@ const mockSaveProduct = async (product, token) => {
 
     return response.json();
 };
+=======
+    const handleSave = async (productToSave) => {
+        try {
+            await mockSaveProduct(productToSave, accessToken);
+            setEditingProduct(null);
+            setIsAdding(false);
+            setNewProduct({ name: '', category: 'Solid Pearls', price: 0, image: '', description: '' });
+            loadProducts(); // Reload data after save
+        } catch (error) {
+            console.error("Error saving product:", error);
+        }
+    };
+>>>>>>> upstream/main
 
     const handleDelete = async (id) => {
         if (!window.confirm(`Are you sure you want to delete product ID: ${id}?`)) return;

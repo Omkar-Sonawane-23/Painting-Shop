@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const { requireAuth, requireRole } = require('../middleware/authmiddleware');
+<<<<<<< HEAD
 const upload = require('../middleware/uploadMiddleware');
 
+=======
+>>>>>>> upstream/main
 const {
   getAllProducts,
   getProductById,
@@ -11,6 +14,7 @@ const {
   deleteProduct
 } = require('../controllers/productController');
 
+<<<<<<< HEAD
 // Public
 router.get('/', getAllProducts);
 router.get('/:id', getProductById);
@@ -35,3 +39,16 @@ router.put(
 router.delete('/:id', requireAuth, requireRole('ADMIN'), deleteProduct);
 
 module.exports = router;
+=======
+// Public routes
+router.get('/', getAllProducts);
+router.get('/:id', getProductById);
+
+// Admin-only routes
+router.post('/', requireAuth, requireRole('ADMIN'), createProduct);
+router.put('/:id', requireAuth, requireRole('ADMIN'), updateProduct);
+router.delete('/:id', requireAuth, requireRole('ADMIN'), deleteProduct);
+
+module.exports = router;
+
+>>>>>>> upstream/main
