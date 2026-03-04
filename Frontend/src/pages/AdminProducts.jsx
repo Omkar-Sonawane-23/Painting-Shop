@@ -119,6 +119,29 @@ const AdminProducts = () => {
         setNewProduct(prev => ({ ...prev, [name]: value }));
     };
 
+<<<<<<< HEAD
+const mockSaveProduct = async (product, token) => {
+    const formData = new FormData();
+    formData.append('name', product.name);
+    formData.append('category', product.category);
+    formData.append('price', product.price);
+    
+    // Append the actual image files to "images"
+    if (product.imagesToUpload) {
+        product.imagesToUpload.forEach(file => {
+            formData.append('images', file);
+        });
+    }
+
+    const response = await fetch(`${API_PRODUCTS_ENDPOINT}`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: formData // Sends binary files directly
+    });
+
+    return response.json();
+};
+=======
     const handleSave = async (productToSave) => {
         try {
             await mockSaveProduct(productToSave, accessToken);
@@ -130,6 +153,7 @@ const AdminProducts = () => {
             console.error("Error saving product:", error);
         }
     };
+>>>>>>> upstream/main
 
     const handleDelete = async (id) => {
         if (!window.confirm(`Are you sure you want to delete product ID: ${id}?`)) return;
