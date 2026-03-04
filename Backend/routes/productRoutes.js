@@ -18,9 +18,9 @@ router.get('/:id', getProductById);
 // Admin
 router.post(
   '/',
-  requireAuth,
-  requireRole('ADMIN'),
-  upload.array('images', 5), // 🔥 THIS WAS MISSING
+  requireAuth,           // 1. Verify Token first
+  requireRole('ADMIN'),  // 2. Verify Role second
+  upload.array('images', 5), // 3. Process files only if authorized
   createProduct
 );
 
